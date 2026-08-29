@@ -1,0 +1,5 @@
+# Cases that have a frozen `reference` (no live clock). Use with match-dataset.json.
+metrics_to_run:
+  - final_response_match
+  - hallucination
+  - final_response_quality

@@ -1,0 +1,17 @@
+---
+description: Deploy and infra require explicit user approval
+alwaysApply: true
+---
+
+# ADK deploy and infrastructure
+
+Do not run deploy or infra commands unless the user explicitly confirms.
+
+**Deploy to dev:** Run `agents-cli deploy` only after the user approves. See the Deployment Guide.
+
+**Production:** Ask which option they want before proceeding:
+
+- Option A: simple single-project (`agents-cli infra single-project`)
+- Option B: full CI/CD (`agents-cli infra cicd`)
+
+`agents-cli scaffold enhance` and `agents-cli scaffold upgrade` also need explicit approval when they change deployment or CI/CD.

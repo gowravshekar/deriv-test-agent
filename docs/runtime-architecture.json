@@ -1,0 +1,230 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "deriv-test-agent runtime",
+    "locale": "en",
+    "output": "runtime-architecture.html",
+    "quality_profile": "showcase",
+    "views": [
+      {
+        "id": "primary-path",
+        "label": "Primary ADK request",
+        "focus": ["clients", "fastapi", "runner", "root-agent", "gemini"],
+        "note": "Playground and eval hit ADK HTTP, then the shared Runner and Gemini."
+      },
+      {
+        "id": "other-surfaces",
+        "label": "A2A and Agent Engine",
+        "focus": ["a2a-clients", "vertex-console", "fastapi", "runner"],
+        "note": "JSON-RPC A2A and reasoning_engine share the same Runner and services."
+      },
+      {
+        "id": "gcp-trust",
+        "label": "Google Cloud trust",
+        "focus": ["root-agent", "gemini", "telemetry", "sessions"],
+        "note": "Model calls and telemetry leave the process under GCP identity."
+      }
+    ]
+  },
+  "components": [
+    {
+      "id": "clients",
+      "type": "external",
+      "label": "ADK clients",
+      "sublabel": "Playground / eval HTTP",
+      "pos": [40, 300],
+      "size": [150, 64]
+    },
+    {
+      "id": "a2a-clients",
+      "type": "external",
+      "label": "A2A clients",
+      "sublabel": "Gemini Enterprise",
+      "pos": [40, 100],
+      "size": [150, 64]
+    },
+    {
+      "id": "vertex-console",
+      "type": "external",
+      "label": "Vertex Console",
+      "sublabel": "reasoning_engine SDK",
+      "pos": [40, 500],
+      "size": [150, 64]
+    },
+    {
+      "id": "fastapi",
+      "type": "backend",
+      "label": "FastAPI app",
+      "sublabel": "uvicorn :8080",
+      "tag": "get_fast_api_app",
+      "pos": [270, 300],
+      "size": [150, 64]
+    },
+    {
+      "id": "runner",
+      "type": "backend",
+      "label": "ADK Runner",
+      "sublabel": "shared app.state.runner",
+      "pos": [500, 300],
+      "size": [160, 64]
+    },
+    {
+      "id": "root-agent",
+      "type": "backend",
+      "label": "root_agent",
+      "sublabel": "gemini-3.7-flash",
+      "tag": "ReAct",
+      "pos": [740, 300],
+      "size": [150, 64]
+    },
+    {
+      "id": "tools",
+      "type": "backend",
+      "label": "Agent tools",
+      "sublabel": "get_weather / get_current_time",
+      "pos": [740, 500],
+      "size": [180, 64]
+    },
+    {
+      "id": "sessions",
+      "type": "database",
+      "label": "Session service",
+      "sublabel": "shared://session",
+      "pos": [500, 500],
+      "size": [160, 64]
+    },
+    {
+      "id": "gemini",
+      "type": "cloud",
+      "label": "Gemini",
+      "sublabel": "Vertex AI or AI Studio",
+      "pos": [980, 300],
+      "size": [160, 64]
+    },
+    {
+      "id": "telemetry",
+      "type": "cloud",
+      "label": "Cloud telemetry",
+      "sublabel": "Trace / Logging / BigQuery",
+      "pos": [980, 100],
+      "size": [170, 64]
+    }
+  ],
+  "boundaries": [
+    {
+      "kind": "security-group",
+      "label": "Serving process",
+      "wraps": ["fastapi", "runner", "root-agent", "tools", "sessions"]
+    },
+    {
+      "kind": "region",
+      "label": "Google Cloud",
+      "wraps": ["gemini", "telemetry"]
+    }
+  ],
+  "connections": [
+    {
+      "id": "clients-to-fastapi",
+      "from": "clients",
+      "to": "fastapi",
+      "label": "ADK /run",
+      "variant": "emphasis",
+      "labelDy": 48
+    },
+    {
+      "id": "a2a-to-fastapi",
+      "from": "a2a-clients",
+      "to": "fastapi",
+      "label": "JSON-RPC /a2a/app",
+      "variant": "dashed",
+      "fromSide": "right",
+      "toSide": "top"
+    },
+    {
+      "id": "console-to-fastapi",
+      "from": "vertex-console",
+      "to": "fastapi",
+      "label": "/api/reasoning_engine",
+      "variant": "dashed",
+      "fromSide": "right",
+      "toSide": "bottom"
+    },
+    {
+      "id": "fastapi-to-runner",
+      "from": "fastapi",
+      "to": "runner",
+      "label": "shared Runner",
+      "labelDy": 48
+    },
+    {
+      "id": "runner-to-agent",
+      "from": "runner",
+      "to": "root-agent",
+      "label": "execute turn",
+      "labelDy": 48
+    },
+    {
+      "id": "agent-to-gemini",
+      "from": "root-agent",
+      "to": "gemini",
+      "label": "generate_content",
+      "variant": "emphasis",
+      "labelDy": 48
+    },
+    {
+      "id": "agent-to-tools",
+      "from": "root-agent",
+      "to": "tools",
+      "label": "function call",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "labelDx": 36
+    },
+    {
+      "id": "runner-to-sessions",
+      "from": "runner",
+      "to": "sessions",
+      "label": "session state",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "labelDx": -36,
+      "labelDy": 36
+    },
+    {
+      "id": "agent-to-telemetry",
+      "from": "root-agent",
+      "to": "telemetry",
+      "label": "OTEL spans",
+      "variant": "dashed",
+      "fromSide": "top",
+      "toSide": "bottom"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "Three HTTP surfaces, one Runner",
+      "items": [
+        "ADK /run, A2A JSON-RPC at /a2a/{app}, Agent Engine at /api/reasoning_engine",
+        "All three share app.state.runner from FastAPI lifespan"
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "Shared session and artifacts",
+      "items": [
+        "shared://session and shared://artifact are process-wide",
+        "Vertex sessions when GOOGLE_CLOUD_AGENT_ENGINE_ID is set; GCS artifacts when LOGS_BUCKET_NAME is set"
+      ]
+    },
+    {
+      "dot": "rose",
+      "title": "Trust and identity",
+      "items": [
+        "Gemini via Vertex ADC or GEMINI_API_KEY; GOOGLE_CLOUD_LOCATION is global",
+        "get_weather and get_current_time are in-process stubs, not public internet calls"
+      ]
+    }
+  ]
+}

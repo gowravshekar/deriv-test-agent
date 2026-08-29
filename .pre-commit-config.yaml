@@ -1,0 +1,46 @@
+# Install both file checks and commit-msg validation with a single
+# `uv run pre-commit install`.
+default_install_hook_types:
+  - pre-commit
+  - commit-msg
+
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: check-merge-conflict
+      - id: check-added-large-files
+        args: ["--maxkb=500"]
+        exclude: ^(artifacts/|coverage\.json)
+      - id: check-case-conflict
+      - id: check-executables-have-shebangs
+      - id: detect-private-key
+      - id: debug-statements
+      - id: mixed-line-ending
+        args: ["--fix=lf"]
+      - id: trailing-whitespace
+        exclude: ^(artifacts/|coverage\.json|uv\.lock)
+      - id: check-builtin-literals
+      - id: end-of-file-fixer
+        exclude: ^(artifacts/|coverage\.json|uv\.lock|deployment_metadata\.json|.*\.b64$)
+      - id: check-yaml
+      - id: check-toml
+
+  - repo: https://github.com/astral-sh/uv-pre-commit
+    # Keep in sync with local `uv --version` so lockfile format stays compatible.
+    rev: 0.5.13
+    hooks:
+      - id: uv-lock
+
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.16.5
+    hooks:
+      - id: ruff-check
+        args: [--fix]
+      - id: ruff-format
+
+  - repo: https://github.com/commitizen-tools/commitizen
+    rev: v4.18.0
+    hooks:
+      - id: commitizen
+        stages: [commit-msg]

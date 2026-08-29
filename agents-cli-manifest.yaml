@@ -1,0 +1,14 @@
+name: "deriv-test-agent"
+acli_version: "1.4.1"
+agent_directory: "app"
+region: "global"
+base_template: "adk"
+generated_at: "2026-08-27T10:48:59.374490+00:00"
+language: "python"
+create_params:
+  deployment_target: "agent_runtime"
+  session_type: "none"
+  cicd_runner: "skip"
+  is_a2a: true
+  agent_gateway: False
+  agent_guidance_filename: "GEMINI.md"

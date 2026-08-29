@@ -1,0 +1,17 @@
+---
+description: Evaluation loop for ADK agent quality and regression checks
+globs: tests/eval/**
+alwaysApply: false
+---
+
+# ADK evaluation loop
+
+This is the main iteration phase. Start with 1–2 eval cases, run `agents-cli eval run`, then change the agent and rerun until satisfied. Expect 5–10+ iterations.
+
+Once you have a baseline:
+
+- `agents-cli eval compare` — regression diffs between grade-results files
+- `agents-cli eval analyze` — cluster failure modes
+- `agents-cli eval optimize` — auto-tune prompts from eval data
+
+Related commands: `agents-cli eval dataset synthesize`, `agents-cli eval generate` / `agents-cli eval grade`, `agents-cli eval metric list`. See the Evaluation Guide for metrics, dataset schema, LLM-as-judge config, and common gotchas.

@@ -1,0 +1,22 @@
+# Default `agents-cli eval run` grades basic-dataset.json (tool-calling cases).
+# tool_use_quality requires function_call events, so greeting / capital_lookup
+# live in conversational-dataset.json and are graded without that metric:
+#   agents-cli eval run --dataset tests/eval/datasets/conversational-dataset.json --config tests/eval/eval_config_conversational.yaml
+#
+# tool_output_match replaces managed final_response_match here: live clock
+# values have no frozen golden answer, so the judge cannot grade them.
+# Managed final_response_match still runs on match-dataset.json.
+metrics_to_run:
+  - tool_use_quality
+  - hallucination
+  - final_response_quality
+  - tool_output_match
+
+custom_metrics:
+  - name: tool_output_match
+    custom_function_file: tool_output_match.py
+  - name: agent_turn_count
+    custom_function: |
+      def evaluate(instance):
+          turns = (instance.get("agent_data") or {}).get("turns", [])
+          return {'score': len(turns)}

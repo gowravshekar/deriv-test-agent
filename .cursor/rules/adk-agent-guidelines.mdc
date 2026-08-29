@@ -1,0 +1,19 @@
+---
+description: ADK agent code preservation, model lock, uv, and import conventions
+alwaysApply: true
+---
+
+# ADK agent guidelines
+
+- **Code preservation**: Only modify code directly targeted by the user's request. Preserve surrounding code, config values (including `model`), comments, and formatting.
+- **Never change the model** unless explicitly asked.
+- **Model 404 errors**: Fix `GOOGLE_CLOUD_LOCATION` (for example use `global`), not the model name.
+- **ADK tool imports**: Import the tool instance, not the module:
+
+```python
+from google.adk.tools.load_web_page import load_web_page
+```
+
+- **Run Python with `uv`**: `uv run python script.py`. Run `agents-cli install` first.
+- **Stop on repeated errors**: If the same error appears 3+ times, fix the root cause instead of retrying.
+- **Terraform conflicts** (Error 409): Use `terraform import` instead of retrying creation.
