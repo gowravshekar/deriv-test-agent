@@ -1,0 +1,23 @@
+[
+  {
+    "incident_id": "inc-001",
+    "owner_team": "Core Trading",
+    "page": true,
+    "suggested_channel": "#incident-core-trading",
+    "summary": "[sev0] Market Data Stream Degradation and Downstream Trade Execution Timeouts in eu-west-1: Severe latency and tick publish failures in market-data-stream are cascading into order submission timeouts for trade-execution in eu-west-1."
+  },
+  {
+    "incident_id": "inc-003",
+    "owner_team": "Payments Platform",
+    "page": true,
+    "suggested_channel": "#incident-payments-platform",
+    "summary": "[sev1] Withdrawal Reconciliation Backlog in payments-ledger: Withdrawal reconciliation queue depth spiked past 18,000 due to settlement callback delays from the external provider."
+  },
+  {
+    "incident_id": "inc-004",
+    "owner_team": "Risk & Compliance",
+    "page": true,
+    "suggested_channel": "#incident-risk-and-compliance",
+    "summary": "[sev1] Risk Engine Decision Distribution Drift Following Model Rollout: Risk evaluation decision distribution shifted 23% from baseline shortly after a new model rollout in eu-west-1."
+  }
+]

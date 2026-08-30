@@ -1,0 +1,59 @@
+{
+  "incident_count": 6,
+  "alert_count": 8,
+  "average_grouping_confidence": 0.825,
+  "severity_distribution": {
+    "sev1": 3,
+    "sev2": 2,
+    "sev3": 1
+  },
+  "blast_radius_distribution": {
+    "multi_service": 1,
+    "single_service": 2,
+    "global": 1,
+    "regional": 2
+  },
+  "human_review_flag_count": 0,
+  "proposed_actions_by_safety_level": {
+    "safe": 6,
+    "needs_approval": 2
+  },
+  "operator_correction_count": 2,
+  "agreement_delta": {
+    "n_labeled": 6,
+    "severity_before_matches": 5,
+    "severity_after_matches": 6,
+    "severity_count_delta": 1,
+    "severity_rate_before": 0.8333333333333334,
+    "severity_rate_after": 1.0,
+    "severity_rate_delta": 0.16666666666666663,
+    "action_before_matches": 5,
+    "action_after_matches": 6,
+    "action_count_delta": 1,
+    "action_rate_before": 0.8333333333333334,
+    "action_rate_after": 1.0,
+    "action_rate_delta": 0.16666666666666663
+  },
+  "services_most_involved": [
+    {
+      "service": "market-data-stream",
+      "incident_count": 2
+    },
+    {
+      "service": "auth-session",
+      "incident_count": 1
+    },
+    {
+      "service": "payments-ledger",
+      "incident_count": 1
+    },
+    {
+      "service": "risk-engine",
+      "incident_count": 1
+    },
+    {
+      "service": "internal-dev-agent",
+      "incident_count": 1
+    }
+  ]
+}

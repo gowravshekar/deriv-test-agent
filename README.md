@@ -50,6 +50,55 @@ agents-cli playground
 
 You can also use features from the [ADK](https://adk.dev/) CLI with `uv run adk`.
 
+## Incident command pipeline
+
+Staged incident workflow (group → severity → actions → safety → drafts → TTY review → re-decision).
+
+```bash
+# Interactive live run (Vertex + TTY operator review)
+uv run python -m app.pipeline --pair public
+
+# First-pass only (stop after stakeholder drafts; skip TTY)
+uv run python -m app.pipeline --pair public --until stakeholder
+
+# Resume: if first-pass JSON already exists, skip Vertex and open operator review
+uv run python -m app.pipeline --pair public
+
+# Force a fresh first pass even when artifacts exist
+uv run python -m app.pipeline --pair public --rerun
+
+# Offline / CI-friendly run (fake LLM, auto-accept reviews)
+uv run python -m app.pipeline --pair public --fake-llm --skip-review
+
+# Validate pair inputs + artifacts
+uv run python validate.py --pair public
+uv run python validate.py --pair public --run-fake
+
+# CI eval (14 stage cases, each graded by five metrics)
+# Regenerate the dataset first so the grounding context matches current fixtures.
+uv run python tests/eval/make_pipeline_dataset.py --pair public
+agents-cli eval run \
+  --config tests/eval/eval_config_pipeline.yaml \
+  --dataset tests/eval/datasets/pipeline-dataset.json \
+  --concurrency 1
+
+# Artifact contracts only (no Vertex/ADC needed)
+agents-cli eval grade \
+  --traces <trace-file> \
+  --config tests/eval/eval_config_artifacts.yaml
+```
+
+`agents-cli eval run` needs Vertex credentials (`gcloud auth application-default login`).
+`grounding_v1` scores the answer against the eval case `context`, so
+`make_pipeline_dataset.py` fills that field with the live `summarize_pair` output;
+run it after the pipeline whenever the input fixtures change.
+The generated cases cover inputs and lifecycle order, grouping, severity,
+actions, deterministic safety, stakeholder drafts, operator review,
+feedback-driven re-decision, comparison, analytics, prior feedback, escalation,
+LLM audit logs, and the final overview.
+
+Pair folders live under `pipeline_files/<pair>/` (pair name is also the session id). Sample inputs are in `pipeline_files/public/`.
+
 ## Commands
 
 | Command              | Description                                                                                 |

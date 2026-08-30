@@ -13,49 +13,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import datetime
-from zoneinfo import ZoneInfo
-
 from google.adk.agents import Agent
 from google.adk.apps import App
 from google.adk.models import Gemini
 from google.genai import types
 
+from app.pipeline.eval_tool import summarize_pair
+
 
 MODEL = "gemini-3.7-flash"
-
-
-def get_weather(query: str) -> str:
-    """Simulates a web search. Use it get information on weather.
-
-    Args:
-        query: A string containing the location to get weather information for.
-
-    Returns:
-        A string with the simulated weather information for the queried location.
-    """
-    if "sf" in query.lower() or "san francisco" in query.lower():
-        return "It's 60 degrees and foggy."
-    return "It's 90 degrees and sunny."
-
-
-def get_current_time(query: str) -> str:
-    """Simulates getting the current time for a city.
-
-    Args:
-        city: The name of the city to get the current time for.
-
-    Returns:
-        A string with the current time information.
-    """
-    if "sf" in query.lower() or "san francisco" in query.lower():
-        tz_identifier = "America/Los_Angeles"
-    else:
-        return f"Sorry, I don't have timezone information for query: {query}."
-
-    tz = ZoneInfo(tz_identifier)
-    now = datetime.datetime.now(tz)
-    return f"The current time for query {query} is {now.strftime('%Y-%m-%d %H:%M:%S %Z%z')}"
 
 
 root_agent = Agent(
@@ -65,13 +31,18 @@ root_agent = Agent(
         retry_options=types.HttpRetryOptions(attempts=3),
     ),
     instruction=(
-        "You are a helpful AI assistant designed to provide accurate and useful "
-        "information. For weather and time questions, use the provided tools and "
-        "report only what they return. If a tool reports that it has no data for a "
-        "location, say so plainly and stop; do not substitute your own timezone "
-        "knowledge, offset, estimate, or forecast."
+        "You are an incident-command assistant. "
+        "For incident questions, call summarize_pair with the pair name "
+        "(default public) and the pipeline focus requested by the user. "
+        "Use focus=overview only when no specific stage is requested. "
+        "Ground your answer only in that tool output and follow the requested "
+        "response format. "
+        "Never claim that actions were executed — recommendations only. "
+        "Do not treat trade-execution dependency failures, payments reconciliation "
+        "backlog, or rollout-related risk-engine drift as low importance without "
+        "strong justification from the tool output."
     ),
-    tools=[get_weather, get_current_time],
+    tools=[summarize_pair],
 )
 
 app = App(

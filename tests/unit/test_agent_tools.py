@@ -12,32 +12,40 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from app.agent import get_current_time, get_weather, root_agent
+from app.agent import root_agent
+from app.pipeline.eval_tool import EVAL_FOCUSES, summarize_pair
 
 
-def test_get_weather_san_francisco() -> None:
-    assert "foggy" in get_weather("sf")
-    assert "foggy" in get_weather("San Francisco")
-
-
-def test_get_weather_other_city() -> None:
-    assert get_weather("london") == "It's 90 degrees and sunny."
-
-
-def test_get_current_time_unknown_city() -> None:
-    assert "Sorry" in get_current_time("london")
-    assert "london" in get_current_time("london")
-
-
-def test_get_current_time_san_francisco() -> None:
-    result = get_current_time("San Francisco")
-    assert "The current time for query San Francisco is" in result
-    assert "PDT" in result or "PST" in result
-
-
-def test_root_agent_has_tools() -> None:
+def test_root_agent_has_summarize_pair_only() -> None:
     assert root_agent.name == "root_agent"
-    assert {tool.__name__ for tool in root_agent.tools} == {
-        "get_weather",
-        "get_current_time",
+    assert {tool.__name__ for tool in root_agent.tools} == {"summarize_pair"}
+
+
+def test_summarize_pair_missing_folder() -> None:
+    text = summarize_pair("does-not-exist")
+    assert "not found" in text.lower()
+
+
+def test_summarize_pair_rejects_unknown_focus() -> None:
+    text = summarize_pair("public", "unknown-stage")
+    assert "unknown focus" in text.lower()
+    assert "safety_guardrails" in text
+
+
+def test_eval_focuses_cover_pipeline_contracts() -> None:
+    assert EVAL_FOCUSES == {
+        "overview",
+        "inputs_and_lifecycle",
+        "incident_grouping",
+        "severity_assessment",
+        "action_proposals",
+        "safety_guardrails",
+        "stakeholder_drafting",
+        "operator_review",
+        "feedback_and_redecision",
+        "comparison",
+        "analytics",
+        "prior_feedback",
+        "escalation",
+        "llm_audit",
     }

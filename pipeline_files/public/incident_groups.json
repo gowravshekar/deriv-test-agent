@@ -1,0 +1,82 @@
+[
+  {
+    "incident_id": "inc-001",
+    "title": "Market data latency impacting trade execution",
+    "summary": "EU market-data latency and errors cascading to trade timeouts.",
+    "alert_ids": [
+      "a-101",
+      "a-102",
+      "a-103"
+    ],
+    "primary_service": "market-data-stream",
+    "suspected_cause": "Consumer lag and fanout failures",
+    "blast_radius": "multi_service",
+    "confidence": 0.88,
+    "needs_human_review": false
+  },
+  {
+    "incident_id": "inc-002",
+    "title": "Auth session CPU after deploy",
+    "summary": "CPU spike after recent auth deploy with normal login traffic.",
+    "alert_ids": [
+      "a-104"
+    ],
+    "primary_service": "auth-session",
+    "suspected_cause": "Recent deployment",
+    "blast_radius": "single_service",
+    "confidence": 0.81,
+    "needs_human_review": false
+  },
+  {
+    "incident_id": "inc-003",
+    "title": "Payments withdrawal reconciliation backlog",
+    "summary": "Global withdrawal queue depth exceeded with provider delays.",
+    "alert_ids": [
+      "a-105"
+    ],
+    "primary_service": "payments-ledger",
+    "suspected_cause": "Settlement provider callback delay",
+    "blast_radius": "global",
+    "confidence": 0.9,
+    "needs_human_review": false
+  },
+  {
+    "incident_id": "inc-004",
+    "title": "Risk engine model drift after rollout",
+    "summary": "Decision distribution shifted after model rollout.",
+    "alert_ids": [
+      "a-106"
+    ],
+    "primary_service": "risk-engine",
+    "suspected_cause": "Model rollout 40 minutes ago",
+    "blast_radius": "regional",
+    "confidence": 0.86,
+    "needs_human_review": false
+  },
+  {
+    "incident_id": "inc-005",
+    "title": "Internal LLM spend burst",
+    "summary": "Token spend spike from code review jobs.",
+    "alert_ids": [
+      "a-107"
+    ],
+    "primary_service": "internal-dev-agent",
+    "suspected_cause": "Autonomous review job burst",
+    "blast_radius": "single_service",
+    "confidence": 0.78,
+    "needs_human_review": false
+  },
+  {
+    "incident_id": "inc-006",
+    "title": "US market-data latency isolated",
+    "summary": "Mild latency in us-east-1 without packet loss.",
+    "alert_ids": [
+      "a-108"
+    ],
+    "primary_service": "market-data-stream",
+    "suspected_cause": "Isolated regional pressure",
+    "blast_radius": "regional",
+    "confidence": 0.72,
+    "needs_human_review": false
+  }
+]

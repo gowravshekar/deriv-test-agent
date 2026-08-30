@@ -1,0 +1,32 @@
+[
+  {
+    "incident_id": "inc-001",
+    "engineering_update": "inc-001 (sev1) affects market-data-stream with multi_service blast radius. EU market-data latency and errors cascading to trade timeouts. Suspected cause is Consumer lag and fanout failures. Technical impact: Quote path and execution timeouts. Immediate next step is shift traffic on market-data-stream. No market-data-stream action is currently blocked by safety checks.",
+    "executive_update": "We are responding to a sev1 issue on market-data-stream. Trading experience degraded; order delays possible. Early indications point to Consumer lag and fanout failures. The team is preparing to shift traffic, and any action needing approval will wait for sign-off."
+  },
+  {
+    "incident_id": "inc-002",
+    "engineering_update": "inc-002 (sev2) affects auth-session with single_service blast radius. CPU spike after recent auth deploy with normal login traffic. Suspected cause is Recent deployment. Technical impact: CPU after deploy. Immediate next step is roll back recent deploy on auth-session. No auth-session action is currently blocked by safety checks.",
+    "executive_update": "We are responding to a sev2 issue on auth-session. Possible login friction. Early indications point to Recent deployment. The team is preparing to roll back recent deploy, and any action needing approval will wait for sign-off."
+  },
+  {
+    "incident_id": "inc-003",
+    "engineering_update": "inc-003 (sev1) affects payments-ledger with global blast radius. Global withdrawal queue depth exceeded with provider delays. Suspected cause is Settlement provider callback delay. Technical impact: Reconciliation backlog. Immediate next step is pause retries on payments-ledger. Safety checks hold pause_retries, scale_workers pending approval.",
+    "executive_update": "We are responding to a sev1 issue on payments-ledger. Withdrawals delayed. Early indications point to Settlement provider callback delay. The team is preparing to pause retries, and any action needing approval will wait for sign-off."
+  },
+  {
+    "incident_id": "inc-004",
+    "engineering_update": "inc-004 (sev1) affects risk-engine with regional blast radius. Decision distribution shifted after model rollout. Suspected cause is Model rollout 40 minutes ago. Technical impact: Model drift after rollout. Immediate next step is roll back model on risk-engine. No risk-engine action is currently blocked by safety checks.",
+    "executive_update": "We are responding to a sev1 issue on risk-engine. Risk decisions may be wrong. Early indications point to Model rollout 40 minutes ago. The team is preparing to roll back model, and any action needing approval will wait for sign-off."
+  },
+  {
+    "incident_id": "inc-005",
+    "engineering_update": "inc-005 (sev3) affects internal-dev-agent with single_service blast radius. Token spend spike from code review jobs. Suspected cause is Autonomous review job burst. Technical impact: LLM spend. Immediate next step is cap token budget on internal-dev-agent. No internal-dev-agent action is currently blocked by safety checks.",
+    "executive_update": "We are responding to a sev3 issue on internal-dev-agent. Internal cost only. Early indications point to Autonomous review job burst. The team is preparing to cap token budget, and any action needing approval will wait for sign-off."
+  },
+  {
+    "incident_id": "inc-006",
+    "engineering_update": "inc-006 (sev2) affects market-data-stream with regional blast radius. Mild latency in us-east-1 without packet loss. Suspected cause is Isolated regional pressure. Technical impact: Isolated us-east-1. Immediate next step is throttle non critical consumers on market-data-stream. No market-data-stream action is currently blocked by safety checks.",
+    "executive_update": "We are responding to a sev2 issue on market-data-stream. Limited regional latency. Early indications point to Isolated regional pressure. The team is preparing to throttle non critical consumers, and any action needing approval will wait for sign-off."
+  }
+]

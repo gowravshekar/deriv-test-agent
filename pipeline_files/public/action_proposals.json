@@ -1,0 +1,66 @@
+[
+  {
+    "incident_id": "inc-001",
+    "action": "shift_traffic",
+    "why": "Runbook-aligned first response",
+    "expected_effect": "Reduce impact",
+    "risk": "Low to moderate",
+    "safety_level": "safe"
+  },
+  {
+    "incident_id": "inc-001",
+    "action": "throttle_non_critical_consumers",
+    "why": "Runbook-aligned first response",
+    "expected_effect": "Reduce impact",
+    "risk": "Low to moderate",
+    "safety_level": "safe"
+  },
+  {
+    "incident_id": "inc-002",
+    "action": "roll_back_recent_deploy",
+    "why": "Runbook-aligned first response",
+    "expected_effect": "Reduce impact",
+    "risk": "Low to moderate",
+    "safety_level": "safe"
+  },
+  {
+    "incident_id": "inc-003",
+    "action": "pause_retries",
+    "why": "Runbook-aligned first response",
+    "expected_effect": "Reduce impact",
+    "risk": "Low to moderate",
+    "safety_level": "needs_approval"
+  },
+  {
+    "incident_id": "inc-003",
+    "action": "scale_workers",
+    "why": "Runbook-aligned first response",
+    "expected_effect": "Reduce impact",
+    "risk": "Low to moderate",
+    "safety_level": "needs_approval"
+  },
+  {
+    "incident_id": "inc-004",
+    "action": "roll_back_model",
+    "why": "Runbook-aligned first response",
+    "expected_effect": "Reduce impact",
+    "risk": "Low to moderate",
+    "safety_level": "safe"
+  },
+  {
+    "incident_id": "inc-005",
+    "action": "cap_token_budget",
+    "why": "Runbook-aligned first response",
+    "expected_effect": "Reduce impact",
+    "risk": "Low to moderate",
+    "safety_level": "safe"
+  },
+  {
+    "incident_id": "inc-006",
+    "action": "throttle_non_critical_consumers",
+    "why": "Runbook-aligned first response",
+    "expected_effect": "Reduce impact",
+    "risk": "Low to moderate",
+    "safety_level": "safe"
+  }
+]

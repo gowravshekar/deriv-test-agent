@@ -1,0 +1,11 @@
+# Pipeline CI eval — do not reuse weather tool_use_quality config.
+metrics_to_run:
+  - instruction_following
+  - grounding
+  - hallucination
+  - final_response_quality
+  - pipeline_artifact_checks
+
+custom_metrics:
+  - name: pipeline_artifact_checks
+    custom_function_file: pipeline_artifact_checks.py
