@@ -1,0 +1,1698 @@
+{
+  "eval_cases": [
+    {
+      "prompt": {
+        "parts": [
+          {
+            "text": "Use summarize_pair with pair=public and focus=overview. Write only full sentences, not bullets or tables. Summarize the final incident-command result. State that the pair is public, recommendations were not executed, how many incidents formed, and the incident id, primary service, severity, and top action for each."
+          }
+        ],
+        "role": "user"
+      },
+      "responses": [
+        {
+          "response": {
+            "parts": [
+              {
+                "text": "This incident command summary is for the public pair, and all generated actions are recommendations only and were not executed. A total of six incidents formed across the pipeline. \n\nIncident inc-001 has a primary service of market-data-stream, a severity rating of sev1, and a top action of shift_traffic. Incident inc-002 has a primary service of auth-session, a severity rating of sev2, and a top action of roll_back_recent_deploy. Incident inc-003 has a primary service of payments-ledger, a severity rating of sev1, and a top action of pause_retries. Incident inc-004 has a primary service of risk-engine, a severity rating of sev1, and a top action of roll_back_model. Incident inc-005 has a primary service of internal-dev-agent, a severity rating of sev3, and a top action of cap_token_budget. Incident inc-006 has a primary service of market-data-stream, a severity rating of sev2, and a top action of throttle_non_critical_consumers."
+              }
+            ],
+            "role": "model"
+          }
+        }
+      ],
+      "eval_case_id": "public_overview",
+      "agent_data": {
+        "agents": {
+          "root_agent": {
+            "agent_id": "root_agent",
+            "agent_type": "LlmAgent",
+            "description": "",
+            "instruction": "You are an incident-command assistant. For incident questions, call summarize_pair with the pair name (default public) and the pipeline focus requested by the user. Use focus=overview only when no specific stage is requested. Ground your answer only in that tool output and follow the requested response format. Never claim that actions were executed — recommendations only. Do not treat trade-execution dependency failures, payments reconciliation backlog, or rollout-related risk-engine drift as low importance without strong justification from the tool output.",
+            "tools": [
+              {
+                "function_declarations": [
+                  {
+                    "description": "Summarize incident command artifacts for a pair folder.\n\nArgs:\n    pair: Name of the folder under pipeline_files/ (also the session id).\n    focus: Pipeline area to summarize. Use overview unless the user asks\n        about a specific stage.\n\nReturns:\n    Grounding evidence for the requested pipeline area.",
+                    "name": "summarize_pair",
+                    "parameters_json_schema": {
+                      "properties": {
+                        "pair": {
+                          "default": "public",
+                          "title": "Pair",
+                          "type": "string"
+                        },
+                        "focus": {
+                          "default": "overview",
+                          "title": "Focus",
+                          "type": "string"
+                        }
+                      },
+                      "title": "summarize_pairParams",
+                      "type": "object"
+                    },
+                    "response_json_schema": {
+                      "type": "string"
+                    }
+                  }
+                ]
+              }
+            ],
+            "sub_agents": []
+          }
+        },
+        "turns": [
+          {
+            "turn_index": 0,
+            "turn_id": "turn_0",
+            "events": [
+              {
+                "author": "root_agent",
+                "content": {
+                  "parts": [
+                    {
+                      "function_call": {
+                        "id": "call_997820",
+                        "args": {
+                          "focus": "overview",
+                          "pair": "public"
+                        },
+                        "name": "summarize_pair"
+                      }
+                    }
+                  ],
+                  "role": "model"
+                },
+                "event_time": "2026-08-30T09:21:23.195631Z"
+              },
+              {
+                "author": "root_agent",
+                "content": {
+                  "parts": [
+                    {
+                      "function_response": {
+                        "id": "call_997820",
+                        "name": "summarize_pair",
+                        "response": {
+                          "result": "Incident command summary for pair=public.\nRecommendations only — no actions were executed.\nIncidents formed: 6.\n- inc-001: Market Data Degradation and Downstream Trade Execution Timeouts in eu-west-1 | primary=market-data-stream | severity=sev1 | blast=multi_service | confidence=0.95 | top_action=shift_traffic (needs_approval)\n  summary: Elevated latency and publish errors in market-data-stream (eu-west-1) causing cascade quote fetch timeouts in trade-execution.\n  severity_reasoning: Direct impact on critical trade execution dependency causing execution timeouts across multiple services in eu-west-1.\n- inc-002: High CPU Utilization on auth-session Post-Deployment in ap-south-1 | primary=auth-session | severity=sev2 | blast=regional | confidence=0.92 | top_action=roll_back_recent_deploy (needs_approval)\n  summary: auth-session instances in ap-south-1 experiencing sustained CPU > 92% following a recent release.\n  severity_reasoning: Regional performance degradation linked to a recent deployment on a high-tier service without active complete service outage.\n- inc-003: Payments Ledger Withdrawal Queue Backlog Due to Provider Latency | primary=payments-ledger | severity=sev1 | blast=global | confidence=0.94 | top_action=pause_retries (needs_approval)\n  summary: Withdrawal reconciliation queue depth exceeded 18,000 items due to settlement callback delays from external provider.\n  severity_reasoning: Payments ledger backlog presents critical financial correctness and settlement delay risks at a global scale.\n- inc-004: Risk Engine Decision Distribution Drift Following Model Rollout | primary=risk-engine | severity=sev1 | blast=regional | confidence=0.93 | top_action=roll_back_model (needs_approval)\n  summary: Decision distribution shifted 23% from baseline with initial false-positive user reports after model update.\n  severity_reasoning: Rollout-correlated risk-engine drift directly impacts critical compliance and automated trading decision accuracy.\n- inc-005: Abnormal LLM Token Consumption by Autonomous Developer Agent | primary=internal-dev-agent | severity=sev3 | blast=single_service | confidence=0.91 | top_action=cap_token_budget (safe)\n  summary: Internal dev agent LLM token consumption reached 4.6x baseline driven by automated code review batch jobs.\n  severity_reasoning: Internal service issue with medium tier rating, no direct customer-facing impact, and no trade execution risk.\n- inc-006: Market Data Stream Latency Spike in us-east-1 | primary=market-data-stream | severity=sev2 | blast=regional | confidence=0.88 | top_action=throttle_non_critical_consumers (safe)\n  summary: Isolated p99 latency increase to 170ms on market-data-stream in us-east-1 without packet loss.\n  severity_reasoning: Regional latency increase on a critical service with safe degradation maintained and no trade-execution timeouts reported.\nAgreement delta: {\"n_labeled\": 6, \"severity_before_matches\": 5, \"severity_after_matches\": 6, \"severity_count_delta\": 1, \"severity_rate_before\": 0.8333333333333334, \"severity_rate_after\": 1.0, \"severity_rate_delta\": 0.16666666666666663, \"action_before_matches\": 6, \"action_after_matches\": 6, \"action_count_delta\": 0, \"action_rate_before\": 1.0, \"action_rate_after\": 1.0, \"action_rate_delta\": 0.0}"
+                        }
+                      }
+                    }
+                  ],
+                  "role": "user"
+                },
+                "event_time": "2026-08-30T09:21:27.287470Z"
+              },
+              {
+                "author": "root_agent",
+                "content": {
+                  "parts": [
+                    {
+                      "text": "This incident command summary is for the public pair, and all generated actions are recommendations only and were not executed. A total of six incidents formed across the pipeline. \n\nIncident inc-001 has a primary service of market-data-stream, a severity rating of sev1, and a top action of shift_traffic. Incident inc-002 has a primary service of auth-session, a severity rating of sev2, and a top action of roll_back_recent_deploy. Incident inc-003 has a primary service of payments-ledger, a severity rating of sev1, and a top action of pause_retries. Incident inc-004 has a primary service of risk-engine, a severity rating of sev1, and a top action of roll_back_model. Incident inc-005 has a primary service of internal-dev-agent, a severity rating of sev3, and a top action of cap_token_budget. Incident inc-006 has a primary service of market-data-stream, a severity rating of sev2, and a top action of throttle_non_critical_consumers."
+                    }
+                  ],
+                  "role": "model"
+                },
+                "event_time": "2026-08-30T09:21:27.294338Z"
+              }
+            ]
+          }
+        ]
+      },
+      "context": "Incident command summary for pair=public.\nRecommendations only — no actions were executed.\nIncidents formed: 6.\n- inc-001: Market Data Degradation and Downstream Trade Execution Timeouts in eu-west-1 | primary=market-data-stream | severity=sev1 | blast=multi_service | confidence=0.95 | top_action=shift_traffic (needs_approval)\n  summary: Elevated latency and publish errors in market-data-stream (eu-west-1) causing cascade quote fetch timeouts in trade-execution.\n  severity_reasoning: Direct impact on critical trade execution dependency causing execution timeouts across multiple services in eu-west-1.\n- inc-002: High CPU Utilization on auth-session Post-Deployment in ap-south-1 | primary=auth-session | severity=sev2 | blast=regional | confidence=0.92 | top_action=roll_back_recent_deploy (needs_approval)\n  summary: auth-session instances in ap-south-1 experiencing sustained CPU > 92% following a recent release.\n  severity_reasoning: Regional performance degradation linked to a recent deployment on a high-tier service without active complete service outage.\n- inc-003: Payments Ledger Withdrawal Queue Backlog Due to Provider Latency | primary=payments-ledger | severity=sev1 | blast=global | confidence=0.94 | top_action=pause_retries (needs_approval)\n  summary: Withdrawal reconciliation queue depth exceeded 18,000 items due to settlement callback delays from external provider.\n  severity_reasoning: Payments ledger backlog presents critical financial correctness and settlement delay risks at a global scale.\n- inc-004: Risk Engine Decision Distribution Drift Following Model Rollout | primary=risk-engine | severity=sev1 | blast=regional | confidence=0.93 | top_action=roll_back_model (needs_approval)\n  summary: Decision distribution shifted 23% from baseline with initial false-positive user reports after model update.\n  severity_reasoning: Rollout-correlated risk-engine drift directly impacts critical compliance and automated trading decision accuracy.\n- inc-005: Abnormal LLM Token Consumption by Autonomous Developer Agent | primary=internal-dev-agent | severity=sev3 | blast=single_service | confidence=0.91 | top_action=cap_token_budget (safe)\n  summary: Internal dev agent LLM token consumption reached 4.6x baseline driven by automated code review batch jobs.\n  severity_reasoning: Internal service issue with medium tier rating, no direct customer-facing impact, and no trade execution risk.\n- inc-006: Market Data Stream Latency Spike in us-east-1 | primary=market-data-stream | severity=sev2 | blast=regional | confidence=0.88 | top_action=throttle_non_critical_consumers (safe)\n  summary: Isolated p99 latency increase to 170ms on market-data-stream in us-east-1 without packet loss.\n  severity_reasoning: Regional latency increase on a critical service with safe degradation maintained and no trade-execution timeouts reported.\nAgreement delta: {\"n_labeled\": 6, \"severity_before_matches\": 5, \"severity_after_matches\": 6, \"severity_count_delta\": 1, \"severity_rate_before\": 0.8333333333333334, \"severity_rate_after\": 1.0, \"severity_rate_delta\": 0.16666666666666663, \"action_before_matches\": 6, \"action_after_matches\": 6, \"action_count_delta\": 0, \"action_rate_before\": 1.0, \"action_rate_after\": 1.0, \"action_rate_delta\": 0.0}"
+    },
+    {
+      "prompt": {
+        "parts": [
+          {
+            "text": "Use summarize_pair with pair=public and focus=inputs_and_lifecycle. Write only full sentences, not bullets or tables. Explain input loading and pipeline lifecycle completion for pair public. State the alert, service, and runbook counts, list the executed stages in order, report quarantined input count, and say whether validation and finalisation completed."
+          }
+        ],
+        "role": "user"
+      },
+      "responses": [
+        {
+          "response": {
+            "parts": [
+              {
+                "text": "During input loading for pair public, the pipeline loaded 8 alerts, 6 service records, and 6 runbooks, with 0 quarantined input records reported. The executed pipeline stages in chronological order were INIT, INPUTS_LOADED, PRIOR_FEEDBACK_LOADED, INCIDENT_GROUPING_COMPLETE, SEVERITY_ASSESSMENT_COMPLETE, ACTION_PROPOSALS_COMPLETE, SAFETY_GUARDRAILS_COMPLETE, STAKEHOLDER_DRAFTING_COMPLETE, OPERATOR_REVIEW_COLLECTED, FEEDBACK_EXAMPLES_BUILT, REDECISION_COMPLETE, BEFORE_AFTER_COMPARISON_COMPLETE, ANALYTICS_GENERATED, VALIDATION_COMPLETE, and RESULTS_FINALISED. Finally, validation completed and results were finalised successfully."
+              }
+            ],
+            "role": "model"
+          }
+        }
+      ],
+      "eval_case_id": "public_inputs_and_lifecycle",
+      "agent_data": {
+        "agents": {
+          "root_agent": {
+            "agent_id": "root_agent",
+            "agent_type": "LlmAgent",
+            "description": "",
+            "instruction": "You are an incident-command assistant. For incident questions, call summarize_pair with the pair name (default public) and the pipeline focus requested by the user. Use focus=overview only when no specific stage is requested. Ground your answer only in that tool output and follow the requested response format. Never claim that actions were executed — recommendations only. Do not treat trade-execution dependency failures, payments reconciliation backlog, or rollout-related risk-engine drift as low importance without strong justification from the tool output.",
+            "tools": [
+              {
+                "function_declarations": [
+                  {
+                    "description": "Summarize incident command artifacts for a pair folder.\n\nArgs:\n    pair: Name of the folder under pipeline_files/ (also the session id).\n    focus: Pipeline area to summarize. Use overview unless the user asks\n        about a specific stage.\n\nReturns:\n    Grounding evidence for the requested pipeline area.",
+                    "name": "summarize_pair",
+                    "parameters_json_schema": {
+                      "properties": {
+                        "pair": {
+                          "default": "public",
+                          "title": "Pair",
+                          "type": "string"
+                        },
+                        "focus": {
+                          "default": "overview",
+                          "title": "Focus",
+                          "type": "string"
+                        }
+                      },
+                      "title": "summarize_pairParams",
+                      "type": "object"
+                    },
+                    "response_json_schema": {
+                      "type": "string"
+                    }
+                  }
+                ]
+              }
+            ],
+            "sub_agents": []
+          }
+        },
+        "turns": [
+          {
+            "turn_index": 0,
+            "turn_id": "turn_0",
+            "events": [
+              {
+                "author": "root_agent",
+                "content": {
+                  "parts": [
+                    {
+                      "function_call": {
+                        "id": "call_453457",
+                        "args": {
+                          "pair": "public",
+                          "focus": "inputs_and_lifecycle"
+                        },
+                        "name": "summarize_pair"
+                      }
+                    }
+                  ],
+                  "role": "model"
+                },
+                "event_time": "2026-08-30T09:21:33.046039Z"
+              },
+              {
+                "author": "root_agent",
+                "content": {
+                  "parts": [
+                    {
+                      "function_response": {
+                        "id": "call_453457",
+                        "name": "summarize_pair",
+                        "response": {
+                          "result": "Pipeline lifecycle evidence for pair=public.\nInputs loaded: 8 alerts, 6 service records, and 6 runbooks.\nExecuted stages in order: INIT, INPUTS_LOADED, PRIOR_FEEDBACK_LOADED, INCIDENT_GROUPING_COMPLETE, SEVERITY_ASSESSMENT_COMPLETE, ACTION_PROPOSALS_COMPLETE, SAFETY_GUARDRAILS_COMPLETE, STAKEHOLDER_DRAFTING_COMPLETE, OPERATOR_REVIEW_COLLECTED, FEEDBACK_EXAMPLES_BUILT, REDECISION_COMPLETE, BEFORE_AFTER_COMPARISON_COMPLETE, ANALYTICS_GENERATED, VALIDATION_COMPLETE, RESULTS_FINALISED.\nValidation completed and results were finalised.\nQuarantined input records: 0."
+                        }
+                      }
+                    }
+                  ],
+                  "role": "user"
+                },
+                "event_time": "2026-08-30T09:21:35.144585Z"
+              },
+              {
+                "author": "root_agent",
+                "content": {
+                  "parts": [
+                    {
+                      "text": "During input loading for pair public, the pipeline loaded 8 alerts, 6 service records, and 6 runbooks, with 0 quarantined input records reported. The executed pipeline stages in chronological order were INIT, INPUTS_LOADED, PRIOR_FEEDBACK_LOADED, INCIDENT_GROUPING_COMPLETE, SEVERITY_ASSESSMENT_COMPLETE, ACTION_PROPOSALS_COMPLETE, SAFETY_GUARDRAILS_COMPLETE, STAKEHOLDER_DRAFTING_COMPLETE, OPERATOR_REVIEW_COLLECTED, FEEDBACK_EXAMPLES_BUILT, REDECISION_COMPLETE, BEFORE_AFTER_COMPARISON_COMPLETE, ANALYTICS_GENERATED, VALIDATION_COMPLETE, and RESULTS_FINALISED. Finally, validation completed and results were finalised successfully."
+                    }
+                  ],
+                  "role": "model"
+                },
+                "event_time": "2026-08-30T09:21:35.147315Z"
+              }
+            ]
+          }
+        ]
+      },
+      "context": "Pipeline lifecycle evidence for pair=public.\nInputs loaded: 8 alerts, 6 service records, and 6 runbooks.\nExecuted stages in order: INIT, INPUTS_LOADED, PRIOR_FEEDBACK_LOADED, INCIDENT_GROUPING_COMPLETE, SEVERITY_ASSESSMENT_COMPLETE, ACTION_PROPOSALS_COMPLETE, SAFETY_GUARDRAILS_COMPLETE, STAKEHOLDER_DRAFTING_COMPLETE, OPERATOR_REVIEW_COLLECTED, FEEDBACK_EXAMPLES_BUILT, REDECISION_COMPLETE, BEFORE_AFTER_COMPARISON_COMPLETE, ANALYTICS_GENERATED, VALIDATION_COMPLETE, RESULTS_FINALISED.\nValidation completed and results were finalised.\nQuarantined input records: 0."
+    },
+    {
+      "prompt": {
+        "parts": [
+          {
+            "text": "Use summarize_pair with pair=public and focus=incident_grouping. Write only full sentences, not bullets or tables. Report incident grouping results for pair public. State the alert and incident counts, then give each incident id, assigned alert ids, primary service, blast radius, confidence, and human-review flag."
+          }
+        ],
+        "role": "user"
+      },
+      "responses": [
+        {
+          "response": {
+            "parts": [
+              {
+                "text": "For pair public, 8 alerts were assigned across 6 incidents. Incident inc-001 has assigned alert ids a-101, a-102, and a-103, primary service market-data-stream, blast radius multi_service, confidence 0.95, and a human-review flag of False. Incident inc-002 has assigned alert id a-104, primary service auth-session, blast radius regional, confidence 0.92, and a human-review flag of False. Incident inc-003 has assigned alert id a-105, primary service payments-ledger, blast radius global, confidence 0.94, and a human-review flag of False. Incident inc-004 has assigned alert id a-106, primary service risk-engine, blast radius regional, confidence 0.93, and a human-review flag of False. Incident inc-005 has assigned alert id a-107, primary service internal-dev-agent, blast radius single_service, confidence 0.91, and a human-review flag of False. Incident inc-006 has assigned alert id a-108, primary service market-data-stream, blast radius regional, confidence 0.88, and a human-review flag of False."
+              }
+            ],
+            "role": "model"
+          }
+        }
+      ],
+      "eval_case_id": "public_incident_grouping",
+      "agent_data": {
+        "agents": {
+          "root_agent": {
+            "agent_id": "root_agent",
+            "agent_type": "LlmAgent",
+            "description": "",
+            "instruction": "You are an incident-command assistant. For incident questions, call summarize_pair with the pair name (default public) and the pipeline focus requested by the user. Use focus=overview only when no specific stage is requested. Ground your answer only in that tool output and follow the requested response format. Never claim that actions were executed — recommendations only. Do not treat trade-execution dependency failures, payments reconciliation backlog, or rollout-related risk-engine drift as low importance without strong justification from the tool output.",
+            "tools": [
+              {
+                "function_declarations": [
+                  {
+                    "description": "Summarize incident command artifacts for a pair folder.\n\nArgs:\n    pair: Name of the folder under pipeline_files/ (also the session id).\n    focus: Pipeline area to summarize. Use overview unless the user asks\n        about a specific stage.\n\nReturns:\n    Grounding evidence for the requested pipeline area.",
+                    "name": "summarize_pair",
+                    "parameters_json_schema": {
+                      "properties": {
+                        "pair": {
+                          "default": "public",
+                          "title": "Pair",
+                          "type": "string"
+                        },
+                        "focus": {
+                          "default": "overview",
+                          "title": "Focus",
+                          "type": "string"
+                        }
+                      },
+                      "title": "summarize_pairParams",
+                      "type": "object"
+                    },
+                    "response_json_schema": {
+                      "type": "string"
+                    }
+                  }
+                ]
+              }
+            ],
+            "sub_agents": []
+          }
+        },
+        "turns": [
+          {
+            "turn_index": 0,
+            "turn_id": "turn_0",
+            "events": [
+              {
+                "author": "root_agent",
+                "content": {
+                  "parts": [
+                    {
+                      "function_call": {
+                        "id": "call_1016265",
+                        "args": {
+                          "pair": "public",
+                          "focus": "incident_grouping"
+                        },
+                        "name": "summarize_pair"
+                      }
+                    }
+                  ],
+                  "role": "model"
+                },
+                "event_time": "2026-08-30T09:21:40.407411Z"
+              },
+              {
+                "author": "root_agent",
+                "content": {
+                  "parts": [
+                    {
+                      "function_response": {
+                        "id": "call_1016265",
+                        "name": "summarize_pair",
+                        "response": {
+                          "result": "Incident grouping evidence for pair=public.\n8 alerts were assigned across 6 incidents.\ninc-001 has primary service market-data-stream, alert ids a-101, a-102, a-103, blast radius multi_service, confidence 0.95, and needs_human_review=False.\ninc-002 has primary service auth-session, alert ids a-104, blast radius regional, confidence 0.92, and needs_human_review=False.\ninc-003 has primary service payments-ledger, alert ids a-105, blast radius global, confidence 0.94, and needs_human_review=False.\ninc-004 has primary service risk-engine, alert ids a-106, blast radius regional, confidence 0.93, and needs_human_review=False.\ninc-005 has primary service internal-dev-agent, alert ids a-107, blast radius single_service, confidence 0.91, and needs_human_review=False.\ninc-006 has primary service market-data-stream, alert ids a-108, blast radius regional, confidence 0.88, and needs_human_review=False."
+                        }
+                      }
+                    }
+                  ],
+                  "role": "user"
+                },
+                "event_time": "2026-08-30T09:21:42.689736Z"
+              },
+              {
+                "author": "root_agent",
+                "content": {
+                  "parts": [
+                    {
+                      "text": "For pair public, 8 alerts were assigned across 6 incidents. Incident inc-001 has assigned alert ids a-101, a-102, and a-103, primary service market-data-stream, blast radius multi_service, confidence 0.95, and a human-review flag of False. Incident inc-002 has assigned alert id a-104, primary service auth-session, blast radius regional, confidence 0.92, and a human-review flag of False. Incident inc-003 has assigned alert id a-105, primary service payments-ledger, blast radius global, confidence 0.94, and a human-review flag of False. Incident inc-004 has assigned alert id a-106, primary service risk-engine, blast radius regional, confidence 0.93, and a human-review flag of False. Incident inc-005 has assigned alert id a-107, primary service internal-dev-agent, blast radius single_service, confidence 0.91, and a human-review flag of False. Incident inc-006 has assigned alert id a-108, primary service market-data-stream, blast radius regional, confidence 0.88, and a human-review flag of False."
+                    }
+                  ],
+                  "role": "model"
+                },
+                "event_time": "2026-08-30T09:21:42.693220Z"
+              }
+            ]
+          }
+        ]
+      },
+      "context": "Incident grouping evidence for pair=public.\n8 alerts were assigned across 6 incidents.\ninc-001 has primary service market-data-stream, alert ids a-101, a-102, a-103, blast radius multi_service, confidence 0.95, and needs_human_review=False.\ninc-002 has primary service auth-session, alert ids a-104, blast radius regional, confidence 0.92, and needs_human_review=False.\ninc-003 has primary service payments-ledger, alert ids a-105, blast radius global, confidence 0.94, and needs_human_review=False.\ninc-004 has primary service risk-engine, alert ids a-106, blast radius regional, confidence 0.93, and needs_human_review=False.\ninc-005 has primary service internal-dev-agent, alert ids a-107, blast radius single_service, confidence 0.91, and needs_human_review=False.\ninc-006 has primary service market-data-stream, alert ids a-108, blast radius regional, confidence 0.88, and needs_human_review=False."
+    },
+    {
+      "prompt": {
+        "parts": [
+          {
+            "text": "Use summarize_pair with pair=public and focus=severity_assessment. Write only full sentences, not bullets or tables. Summarize severity assessment for pair public. For every incident state its severity, status, business impact, technical impact, and reasoning."
+          }
+        ],
+        "role": "user"
+      },
+      "responses": [
+        {
+          "response": {
+            "parts": [
+              {
+                "text": "The severity assessment for pair public covers six open incidents across the platform.\n\nFor incident inc-001, the severity is sev1 and the status is open. Its business impact is delayed or failing trade executions and stale pricing for customers operating in the eu-west-1 region. The technical impact is elevated latency, publish errors, and websocket fanout failure in market-data-stream causing cascading timeouts in trade-execution. The reasoning is a direct impact on a critical trade execution dependency causing execution timeouts across multiple services in eu-west-1.\n\nFor incident inc-002, the severity is sev2 and the status is open. Its business impact is potential authentication delays and session degradation for users in ap-south-1. The technical impact is sustained high CPU utilization exceeding 92% across auth-session instances following a recent deployment. The reasoning is regional performance degradation linked to a recent deployment on a high-tier service without an active complete service outage.\n\nFor incident inc-003, the severity is sev1 and the status is open. Its business impact is significant delays in processing customer withdrawals and potential financial reconciliation risk. The technical impact is a withdrawal reconciliation queue depth exceeding 18,000 items due to settlement provider latency and retry build-up. The reasoning is that the payments ledger backlog presents critical financial correctness and settlement delay risks at a global scale.\n\nFor incident inc-004, the severity is sev1 and the status is open. Its business impact is incorrect risk decisions leading to false positive trade and action rejections as well as user disruption. The technical impact is a risk engine decision distribution shifted 23% from baseline following a recent model rollout. The reasoning is that rollout-correlated risk-engine drift directly impacts critical compliance and automated trading decision accuracy.\n\nFor incident inc-005, the severity is sev3 and the status is open. Its business impact is increased internal operational costs and potential slowdown in developer tooling workflows. The technical impact is an internal developer agent consuming 4.6 times the baseline LLM tokens due to unconstrained automated code review loops. The reasoning is an internal service issue with a medium tier rating, having no direct customer-facing impact and no trade execution risk.\n\nFor incident inc-006, the severity is sev2 and the status is open. Its business impact is a minor latency increase for market data consumers in us-east-1 without direct execution failure. The technical impact is a p99 latency spike to 170ms on market-data-stream in us-east-1 without packet loss or cascading service failure. The reasoning is a regional latency increase on a critical service where safe degradation is maintained and no trade-execution timeouts are reported."
+              }
+            ],
+            "role": "model"
+          }
+        }
+      ],
+      "eval_case_id": "public_severity_assessment",
+      "agent_data": {
+        "agents": {
+          "root_agent": {
+            "agent_id": "root_agent",
+            "agent_type": "LlmAgent",
+            "description": "",
+            "instruction": "You are an incident-command assistant. For incident questions, call summarize_pair with the pair name (default public) and the pipeline focus requested by the user. Use focus=overview only when no specific stage is requested. Ground your answer only in that tool output and follow the requested response format. Never claim that actions were executed — recommendations only. Do not treat trade-execution dependency failures, payments reconciliation backlog, or rollout-related risk-engine drift as low importance without strong justification from the tool output.",
+            "tools": [
+              {
+                "function_declarations": [
+                  {
+                    "description": "Summarize incident command artifacts for a pair folder.\n\nArgs:\n    pair: Name of the folder under pipeline_files/ (also the session id).\n    focus: Pipeline area to summarize. Use overview unless the user asks\n        about a specific stage.\n\nReturns:\n    Grounding evidence for the requested pipeline area.",
+                    "name": "summarize_pair",
+                    "parameters_json_schema": {
+                      "properties": {
+                        "pair": {
+                          "default": "public",
+                          "title": "Pair",
+                          "type": "string"
+                        },
+                        "focus": {
+                          "default": "overview",
+                          "title": "Focus",
+                          "type": "string"
+                        }
+                      },
+                      "title": "summarize_pairParams",
+                      "type": "object"
+                    },
+                    "response_json_schema": {
+                      "type": "string"
+                    }
+                  }
+                ]
+              }
+            ],
+            "sub_agents": []
+          }
+        },
+        "turns": [
+          {
+            "turn_index": 0,
+            "turn_id": "turn_0",
+            "events": [
+              {
+                "author": "root_agent",
+                "content": {
+                  "parts": [
+                    {
+                      "function_call": {
+                        "id": "call_430112",
+                        "args": {
+                          "focus": "severity_assessment",
+                          "pair": "public"
+                        },
+                        "name": "summarize_pair"
+                      }
+                    }
+                  ],
+                  "role": "model"
+                },
+                "event_time": "2026-08-30T09:21:48.509795Z"
+              },
+              {
+                "author": "root_agent",
+                "content": {
+                  "parts": [
+                    {
+                      "function_response": {
+                        "id": "call_430112",
+                        "name": "summarize_pair",
+                        "response": {
+                          "result": "Severity assessment evidence for pair=public.\ninc-001 is sev1 with status open; business impact is Delayed or failing trade executions and stale pricing for customers operating in the eu-west-1 region.; technical impact is Elevated latency, publish errors, and websocket fanout failure in market-data-stream causing cascading timeouts in trade-execution.; reasoning is Direct impact on critical trade execution dependency causing execution timeouts across multiple services in eu-west-1..\ninc-002 is sev2 with status open; business impact is Potential authentication delays and session degradation for users in ap-south-1.; technical impact is Sustained high CPU utilization exceeding 92% across auth-session instances following a recent deployment.; reasoning is Regional performance degradation linked to a recent deployment on a high-tier service without active complete service outage..\ninc-003 is sev1 with status open; business impact is Significant delays in processing customer withdrawals and potential financial reconciliation risk.; technical impact is Withdrawal reconciliation queue depth exceeding 18,000 items due to settlement provider latency and retry build-up.; reasoning is Payments ledger backlog presents critical financial correctness and settlement delay risks at a global scale..\ninc-004 is sev1 with status open; business impact is Incorrect risk decisions leading to false positive trade/action rejections and user disruption.; technical impact is Risk engine decision distribution shifted 23% from baseline following a recent model rollout.; reasoning is Rollout-correlated risk-engine drift directly impacts critical compliance and automated trading decision accuracy..\ninc-005 is sev3 with status open; business impact is Increased internal operational costs and potential slowdown in developer tooling workflows.; technical impact is Internal developer agent consuming 4.6x baseline LLM tokens due to unconstrained automated code review loops.; reasoning is Internal service issue with medium tier rating, no direct customer-facing impact, and no trade execution risk..\ninc-006 is sev2 with status open; business impact is Minor latency increase for market data consumers in us-east-1 without direct execution failure.; technical impact is p99 latency spike to 170ms on market-data-stream in us-east-1 without packet loss or cascading service failure.; reasoning is Regional latency increase on a critical service with safe degradation maintained and no trade-execution timeouts reported.."
+                        }
+                      }
+                    }
+                  ],
+                  "role": "user"
+                },
+                "event_time": "2026-08-30T09:21:50.844925Z"
+              },
+              {
+                "author": "root_agent",
+                "content": {
+                  "parts": [
+                    {
+                      "text": "The severity assessment for pair public covers six open incidents across the platform.\n\nFor incident inc-001, the severity is sev1 and the status is open. Its business impact is delayed or failing trade executions and stale pricing for customers operating in the eu-west-1 region. The technical impact is elevated latency, publish errors, and websocket fanout failure in market-data-stream causing cascading timeouts in trade-execution. The reasoning is a direct impact on a critical trade execution dependency causing execution timeouts across multiple services in eu-west-1.\n\nFor incident inc-002, the severity is sev2 and the status is open. Its business impact is potential authentication delays and session degradation for users in ap-south-1. The technical impact is sustained high CPU utilization exceeding 92% across auth-session instances following a recent deployment. The reasoning is regional performance degradation linked to a recent deployment on a high-tier service without an active complete service outage.\n\nFor incident inc-003, the severity is sev1 and the status is open. Its business impact is significant delays in processing customer withdrawals and potential financial reconciliation risk. The technical impact is a withdrawal reconciliation queue depth exceeding 18,000 items due to settlement provider latency and retry build-up. The reasoning is that the payments ledger backlog presents critical financial correctness and settlement delay risks at a global scale.\n\nFor incident inc-004, the severity is sev1 and the status is open. Its business impact is incorrect risk decisions leading to false positive trade and action rejections as well as user disruption. The technical impact is a risk engine decision distribution shifted 23% from baseline following a recent model rollout. The reasoning is that rollout-correlated risk-engine drift directly impacts critical compliance and automated trading decision accuracy.\n\nFor incident inc-005, the severity is sev3 and the status is open. Its business impact is increased internal operational costs and potential slowdown in developer tooling workflows. The technical impact is an internal developer agent consuming 4.6 times the baseline LLM tokens due to unconstrained automated code review loops. The reasoning is an internal service issue with a medium tier rating, having no direct customer-facing impact and no trade execution risk.\n\nFor incident inc-006, the severity is sev2 and the status is open. Its business impact is a minor latency increase for market data consumers in us-east-1 without direct execution failure. The technical impact is a p99 latency spike to 170ms on market-data-stream in us-east-1 without packet loss or cascading service failure. The reasoning is a regional latency increase on a critical service where safe degradation is maintained and no trade-execution timeouts are reported."
+                    }
+                  ],
+                  "role": "model"
+                },
+                "event_time": "2026-08-30T09:21:50.848138Z"
+              }
+            ]
+          }
+        ]
+      },
+      "context": "Severity assessment evidence for pair=public.\ninc-001 is sev1 with status open; business impact is Delayed or failing trade executions and stale pricing for customers operating in the eu-west-1 region.; technical impact is Elevated latency, publish errors, and websocket fanout failure in market-data-stream causing cascading timeouts in trade-execution.; reasoning is Direct impact on critical trade execution dependency causing execution timeouts across multiple services in eu-west-1..\ninc-002 is sev2 with status open; business impact is Potential authentication delays and session degradation for users in ap-south-1.; technical impact is Sustained high CPU utilization exceeding 92% across auth-session instances following a recent deployment.; reasoning is Regional performance degradation linked to a recent deployment on a high-tier service without active complete service outage..\ninc-003 is sev1 with status open; business impact is Significant delays in processing customer withdrawals and potential financial reconciliation risk.; technical impact is Withdrawal reconciliation queue depth exceeding 18,000 items due to settlement provider latency and retry build-up.; reasoning is Payments ledger backlog presents critical financial correctness and settlement delay risks at a global scale..\ninc-004 is sev1 with status open; business impact is Incorrect risk decisions leading to false positive trade/action rejections and user disruption.; technical impact is Risk engine decision distribution shifted 23% from baseline following a recent model rollout.; reasoning is Rollout-correlated risk-engine drift directly impacts critical compliance and automated trading decision accuracy..\ninc-005 is sev3 with status open; business impact is Increased internal operational costs and potential slowdown in developer tooling workflows.; technical impact is Internal developer agent consuming 4.6x baseline LLM tokens due to unconstrained automated code review loops.; reasoning is Internal service issue with medium tier rating, no direct customer-facing impact, and no trade execution risk..\ninc-006 is sev2 with status open; business impact is Minor latency increase for market data consumers in us-east-1 without direct execution failure.; technical impact is p99 latency spike to 170ms on market-data-stream in us-east-1 without packet loss or cascading service failure.; reasoning is Regional latency increase on a critical service with safe degradation maintained and no trade-execution timeouts reported.."
+    },
+    {
+      "prompt": {
+        "parts": [
+          {
+            "text": "Use summarize_pair with pair=public and focus=action_proposals. Write only full sentences, not bullets or tables. Begin by saying these are first-response action proposals for pair public. For every proposal state the incident id, action, model safety level, expected effect, and risk. Describe recommendations only."
+          }
+        ],
+        "role": "user"
+      },
+      "responses": [
+        {
+          "response": {
+            "parts": [
+              {
+                "text": "These are first-response action proposals for pair public. \n\nFor incident inc-001, the recommended action is shift_traffic with a model safety level of needs_approval, where the expected effect is that it restores reliable market data stream delivery and eliminates quote fetch timeouts for downstream trade execution services, and the associated risk is increased cross-region network latency and potential load surge on target region infrastructure. \n\nFor incident inc-002, the proposed action is roll_back_recent_deploy at a model safety level of needs_approval, which is expected to restore auth-session to the previous stable version and reduce CPU utilization to normal operational levels in ap-south-1, carrying the risk of temporary pod transition overhead and reversion of newly shipped features. \n\nFor incident inc-003, the recommended action is pause_retries with a model safety level of safe, with the expected effect of stopping retry queue depth from growing further while downstream provider latency persists, while the risk is delayed settlement reconciliation for pending withdrawal attempts until retries are resumed. \n\nFor incident inc-004, the proposal recommends roll_back_model at a model safety level of needs_approval, which has the expected effect of reverting the risk engine to the previous stable model baseline, restoring normal decision distribution and reducing false positives, alongside a risk of a brief transition period while the previous model version reloads in memory. \n\nFor incident inc-005, the first recommended action is cap_token_budget with a model safety level of safe, where the expected effect is immediately preventing token spend from exceeding pre-set thresholds and stopping runaway consumption, with the associated risk that ongoing automated code review jobs exceeding the cap may fail or be temporarily truncated. \n\nAlso for incident inc-005, the second recommended action is rate_limit_jobs at a model safety level of safe, which is expected to pace the execution of code review jobs to steady consumption levels within acceptable bounds, carrying the risk of slight delay in turnaround time for non-critical code reviews. \n\nFor incident inc-006, the proposed action is throttle_non_critical_consumers at a model safety level of safe, with the expected effect of bringing p99 latency back down to normal operational thresholds while protecting critical market data paths, and the associated risk is temporary reduction in update frequency or delayed telemetry for non-critical downstream subscribers."
+              }
+            ],
+            "role": "model"
+          }
+        }
+      ],
+      "eval_case_id": "public_action_proposals",
+      "agent_data": {
+        "agents": {
+          "root_agent": {
+            "agent_id": "root_agent",
+            "agent_type": "LlmAgent",
+            "description": "",
+            "instruction": "You are an incident-command assistant. For incident questions, call summarize_pair with the pair name (default public) and the pipeline focus requested by the user. Use focus=overview only when no specific stage is requested. Ground your answer only in that tool output and follow the requested response format. Never claim that actions were executed — recommendations only. Do not treat trade-execution dependency failures, payments reconciliation backlog, or rollout-related risk-engine drift as low importance without strong justification from the tool output.",
+            "tools": [
+              {
+                "function_declarations": [
+                  {
+                    "description": "Summarize incident command artifacts for a pair folder.\n\nArgs:\n    pair: Name of the folder under pipeline_files/ (also the session id).\n    focus: Pipeline area to summarize. Use overview unless the user asks\n        about a specific stage.\n\nReturns:\n    Grounding evidence for the requested pipeline area.",
+                    "name": "summarize_pair",
+                    "parameters_json_schema": {
+                      "properties": {
+                        "pair": {
+                          "default": "public",
+                          "title": "Pair",
+                          "type": "string"
+                        },
+                        "focus": {
+                          "default": "overview",
+                          "title": "Focus",
+                          "type": "string"
+                        }
+                      },
+                      "title": "summarize_pairParams",
+                      "type": "object"
+                    },
+                    "response_json_schema": {
+                      "type": "string"
+                    }
+                  }
+                ]
+              }
+            ],
+            "sub_agents": []
+          }
+        },
+        "turns": [
+          {
+            "turn_index": 0,
+            "turn_id": "turn_0",
+            "events": [
+              {
+                "author": "root_agent",
+                "content": {
+                  "parts": [
+                    {
+                      "function_call": {
+                        "id": "call_1330341",
+                        "args": {
+                          "focus": "action_proposals",
+                          "pair": "public"
+                        },
+                        "name": "summarize_pair"
+                      }
+                    }
+                  ],
+                  "role": "model"
+                },
+                "event_time": "2026-08-30T09:21:58.763718Z"
+              },
+              {
+                "author": "root_agent",
+                "content": {
+                  "parts": [
+                    {
+                      "function_response": {
+                        "id": "call_1330341",
+                        "name": "summarize_pair",
+                        "response": {
+                          "result": "First-response action proposal evidence for pair=public.\ninc-001 proposes shift_traffic at model safety level needs_approval; expected effect is Restores reliable market data stream delivery and eliminates quote fetch timeouts for downstream trade execution services.; risk is Increased cross-region network latency and potential load surge on target region infrastructure..\ninc-002 proposes roll_back_recent_deploy at model safety level needs_approval; expected effect is Restores auth-session to the previous stable version and reduces CPU utilization to normal operational levels in ap-south-1.; risk is Temporary pod transition overhead and reversion of newly shipped features..\ninc-003 proposes pause_retries at model safety level safe; expected effect is Stops retry queue depth from growing further while downstream provider latency persists.; risk is Delayed settlement reconciliation for pending withdrawal attempts until retries are resumed..\ninc-004 proposes roll_back_model at model safety level needs_approval; expected effect is Reverts the risk engine to the previous stable model baseline, restoring normal decision distribution and reducing false positives.; risk is Brief transition period while the previous model version reloads in memory..\ninc-005 proposes cap_token_budget at model safety level safe; expected effect is Immediately prevents token spend from exceeding pre-set thresholds and stops runaway consumption.; risk is Ongoing automated code review jobs exceeding the cap may fail or be temporarily truncated..\ninc-005 proposes rate_limit_jobs at model safety level safe; expected effect is Paces the execution of code review jobs to steady consumption levels within acceptable bounds.; risk is Slight delay in turnaround time for non-critical code reviews..\ninc-006 proposes throttle_non_critical_consumers at model safety level safe; expected effect is Brings p99 latency back down to normal operational thresholds while protecting critical market data paths.; risk is Temporary reduction in update frequency or delayed telemetry for non-critical downstream subscribers.."
+                        }
+                      }
+                    }
+                  ],
+                  "role": "user"
+                },
+                "event_time": "2026-08-30T09:22:01.603456Z"
+              },
+              {
+                "author": "root_agent",
+                "content": {
+                  "parts": [
+                    {
+                      "text": "These are first-response action proposals for pair public. \n\nFor incident inc-001, the recommended action is shift_traffic with a model safety level of needs_approval, where the expected effect is that it restores reliable market data stream delivery and eliminates quote fetch timeouts for downstream trade execution services, and the associated risk is increased cross-region network latency and potential load surge on target region infrastructure. \n\nFor incident inc-002, the proposed action is roll_back_recent_deploy at a model safety level of needs_approval, which is expected to restore auth-session to the previous stable version and reduce CPU utilization to normal operational levels in ap-south-1, carrying the risk of temporary pod transition overhead and reversion of newly shipped features. \n\nFor incident inc-003, the recommended action is pause_retries with a model safety level of safe, with the expected effect of stopping retry queue depth from growing further while downstream provider latency persists, while the risk is delayed settlement reconciliation for pending withdrawal attempts until retries are resumed. \n\nFor incident inc-004, the proposal recommends roll_back_model at a model safety level of needs_approval, which has the expected effect of reverting the risk engine to the previous stable model baseline, restoring normal decision distribution and reducing false positives, alongside a risk of a brief transition period while the previous model version reloads in memory. \n\nFor incident inc-005, the first recommended action is cap_token_budget with a model safety level of safe, where the expected effect is immediately preventing token spend from exceeding pre-set thresholds and stopping runaway consumption, with the associated risk that ongoing automated code review jobs exceeding the cap may fail or be temporarily truncated. \n\nAlso for incident inc-005, the second recommended action is rate_limit_jobs at a model safety level of safe, which is expected to pace the execution of code review jobs to steady consumption levels within acceptable bounds, carrying the risk of slight delay in turnaround time for non-critical code reviews. \n\nFor incident inc-006, the proposed action is throttle_non_critical_consumers at a model safety level of safe, with the expected effect of bringing p99 latency back down to normal operational thresholds while protecting critical market data paths, and the associated risk is temporary reduction in update frequency or delayed telemetry for non-critical downstream subscribers."
+                    }
+                  ],
+                  "role": "model"
+                },
+                "event_time": "2026-08-30T09:22:01.605571Z"
+              }
+            ]
+          }
+        ]
+      },
+      "context": "First-response action proposal evidence for pair=public.\ninc-001 proposes shift_traffic at model safety level needs_approval; expected effect is Restores reliable market data stream delivery and eliminates quote fetch timeouts for downstream trade execution services.; risk is Increased cross-region network latency and potential load surge on target region infrastructure..\ninc-002 proposes roll_back_recent_deploy at model safety level needs_approval; expected effect is Restores auth-session to the previous stable version and reduces CPU utilization to normal operational levels in ap-south-1.; risk is Temporary pod transition overhead and reversion of newly shipped features..\ninc-003 proposes pause_retries at model safety level safe; expected effect is Stops retry queue depth from growing further while downstream provider latency persists.; risk is Delayed settlement reconciliation for pending withdrawal attempts until retries are resumed..\ninc-004 proposes roll_back_model at model safety level needs_approval; expected effect is Reverts the risk engine to the previous stable model baseline, restoring normal decision distribution and reducing false positives.; risk is Brief transition period while the previous model version reloads in memory..\ninc-005 proposes cap_token_budget at model safety level safe; expected effect is Immediately prevents token spend from exceeding pre-set thresholds and stops runaway consumption.; risk is Ongoing automated code review jobs exceeding the cap may fail or be temporarily truncated..\ninc-005 proposes rate_limit_jobs at model safety level safe; expected effect is Paces the execution of code review jobs to steady consumption levels within acceptable bounds.; risk is Slight delay in turnaround time for non-critical code reviews..\ninc-006 proposes throttle_non_critical_consumers at model safety level safe; expected effect is Brings p99 latency back down to normal operational thresholds while protecting critical market data paths.; risk is Temporary reduction in update frequency or delayed telemetry for non-critical downstream subscribers.."
+    },
+    {
+      "prompt": {
+        "parts": [
+          {
+            "text": "Use summarize_pair with pair=public and focus=safety_guardrails. Write only full sentences, not bullets or tables. Explain deterministic safety review for pair public. For every reviewed action state the model safety level, final safety level, and guardrail reasons. Explicitly say that no action was executed."
+          }
+        ],
+        "role": "user"
+      },
+      "responses": [
+        {
+          "response": {
+            "parts": [
+              {
+                "text": "The deterministic safety review for pair public evaluated several recommended incident actions to ensure safety guardrails were maintained. These findings are recommendations only, and no action was executed. \n\nFor incident inc-001, the action shift_traffic had an initial model safety level of needs_approval, a final safety level of needs_approval, and guardrail reasons of none. For incident inc-002, the action roll_back_recent_deploy had an initial model safety level of needs_approval, a final safety level of needs_approval, and guardrail reasons of none. For incident inc-003, the action pause_retries had an initial model safety level of safe, a final safety level of needs_approval, and guardrail reasons of change freeze on critical dependency path. For incident inc-004, the action roll_back_model had an initial model safety level of needs_approval, a final safety level of needs_approval, and guardrail reasons of none. For incident inc-005, the action cap_token_budget had an initial model safety level of safe, a final safety level of safe, and guardrail reasons of none. For incident inc-005, the action rate_limit_jobs had an initial model safety level of safe, a final safety level of safe, and guardrail reasons of none. For incident inc-006, the action throttle_non_critical_consumers had an initial model safety level of safe, a final safety level of safe, and guardrail reasons of none."
+              }
+            ],
+            "role": "model"
+          }
+        }
+      ],
+      "eval_case_id": "public_safety_guardrails",
+      "agent_data": {
+        "agents": {
+          "root_agent": {
+            "agent_id": "root_agent",
+            "agent_type": "LlmAgent",
+            "description": "",
+            "instruction": "You are an incident-command assistant. For incident questions, call summarize_pair with the pair name (default public) and the pipeline focus requested by the user. Use focus=overview only when no specific stage is requested. Ground your answer only in that tool output and follow the requested response format. Never claim that actions were executed — recommendations only. Do not treat trade-execution dependency failures, payments reconciliation backlog, or rollout-related risk-engine drift as low importance without strong justification from the tool output.",
+            "tools": [
+              {
+                "function_declarations": [
+                  {
+                    "description": "Summarize incident command artifacts for a pair folder.\n\nArgs:\n    pair: Name of the folder under pipeline_files/ (also the session id).\n    focus: Pipeline area to summarize. Use overview unless the user asks\n        about a specific stage.\n\nReturns:\n    Grounding evidence for the requested pipeline area.",
+                    "name": "summarize_pair",
+                    "parameters_json_schema": {
+                      "properties": {
+                        "pair": {
+                          "default": "public",
+                          "title": "Pair",
+                          "type": "string"
+                        },
+                        "focus": {
+                          "default": "overview",
+                          "title": "Focus",
+                          "type": "string"
+                        }
+                      },
+                      "title": "summarize_pairParams",
+                      "type": "object"
+                    },
+                    "response_json_schema": {
+                      "type": "string"
+                    }
+                  }
+                ]
+              }
+            ],
+            "sub_agents": []
+          }
+        },
+        "turns": [
+          {
+            "turn_index": 0,
+            "turn_id": "turn_0",
+            "events": [
+              {
+                "author": "root_agent",
+                "content": {
+                  "parts": [
+                    {
+                      "function_call": {
+                        "id": "call_507037",
+                        "args": {
+                          "focus": "safety_guardrails",
+                          "pair": "public"
+                        },
+                        "name": "summarize_pair"
+                      }
+                    }
+                  ],
+                  "role": "model"
+                },
+                "event_time": "2026-08-30T09:22:11.168941Z"
+              },
+              {
+                "author": "root_agent",
+                "content": {
+                  "parts": [
+                    {
+                      "function_response": {
+                        "id": "call_507037",
+                        "name": "summarize_pair",
+                        "response": {
+                          "result": "Deterministic safety guardrail evidence for pair=public.\nThese are recommendations only; no action was executed.\ninc-001 action shift_traffic changed from model safety needs_approval to final safety needs_approval; guardrail reasons are none.\ninc-002 action roll_back_recent_deploy changed from model safety needs_approval to final safety needs_approval; guardrail reasons are none.\ninc-003 action pause_retries changed from model safety safe to final safety needs_approval; guardrail reasons are change freeze on critical dependency path.\ninc-004 action roll_back_model changed from model safety needs_approval to final safety needs_approval; guardrail reasons are none.\ninc-005 action cap_token_budget changed from model safety safe to final safety safe; guardrail reasons are none.\ninc-005 action rate_limit_jobs changed from model safety safe to final safety safe; guardrail reasons are none.\ninc-006 action throttle_non_critical_consumers changed from model safety safe to final safety safe; guardrail reasons are none."
+                        }
+                      }
+                    }
+                  ],
+                  "role": "user"
+                },
+                "event_time": "2026-08-30T09:22:13.965748Z"
+              },
+              {
+                "author": "root_agent",
+                "content": {
+                  "parts": [
+                    {
+                      "text": "The deterministic safety review for pair public evaluated several recommended incident actions to ensure safety guardrails were maintained. These findings are recommendations only, and no action was executed. \n\nFor incident inc-001, the action shift_traffic had an initial model safety level of needs_approval, a final safety level of needs_approval, and guardrail reasons of none. For incident inc-002, the action roll_back_recent_deploy had an initial model safety level of needs_approval, a final safety level of needs_approval, and guardrail reasons of none. For incident inc-003, the action pause_retries had an initial model safety level of safe, a final safety level of needs_approval, and guardrail reasons of change freeze on critical dependency path. For incident inc-004, the action roll_back_model had an initial model safety level of needs_approval, a final safety level of needs_approval, and guardrail reasons of none. For incident inc-005, the action cap_token_budget had an initial model safety level of safe, a final safety level of safe, and guardrail reasons of none. For incident inc-005, the action rate_limit_jobs had an initial model safety level of safe, a final safety level of safe, and guardrail reasons of none. For incident inc-006, the action throttle_non_critical_consumers had an initial model safety level of safe, a final safety level of safe, and guardrail reasons of none."
+                    }
+                  ],
+                  "role": "model"
+                },
+                "event_time": "2026-08-30T09:22:13.967679Z"
+              }
+            ]
+          }
+        ]
+      },
+      "context": "Deterministic safety guardrail evidence for pair=public.\nThese are recommendations only; no action was executed.\ninc-001 action shift_traffic changed from model safety needs_approval to final safety needs_approval; guardrail reasons are none.\ninc-002 action roll_back_recent_deploy changed from model safety needs_approval to final safety needs_approval; guardrail reasons are none.\ninc-003 action pause_retries changed from model safety safe to final safety needs_approval; guardrail reasons are change freeze on critical dependency path.\ninc-004 action roll_back_model changed from model safety needs_approval to final safety needs_approval; guardrail reasons are none.\ninc-005 action cap_token_budget changed from model safety safe to final safety safe; guardrail reasons are none.\ninc-005 action rate_limit_jobs changed from model safety safe to final safety safe; guardrail reasons are none.\ninc-006 action throttle_non_critical_consumers changed from model safety safe to final safety safe; guardrail reasons are none."
+    },
+    {
+      "prompt": {
+        "parts": [
+          {
+            "text": "Use summarize_pair with pair=public and focus=stakeholder_drafting. Write only full sentences, not bullets or tables. Summarize stakeholder drafting for pair public. Confirm every incident has a distinct engineering commander update and executive update, then describe the affected system, likely impact, next step, and blocked actions reflected in those drafts."
+          }
+        ],
+        "role": "user"
+      },
+      "responses": [
+        {
+          "response": {
+            "parts": [
+              {
+                "text": "Every incident in the stakeholder drafting artifacts for pair public, spanning inc-001 through inc-006, contains both a distinct engineering commander update and an executive update.\n\nFor incident inc-001, the affected systems are market-data-stream and downstream trade-execution services in eu-west-1. The likely impact includes cascading quote fetch timeouts, elevated latency, stale pricing, and delayed or failing trade executions for customers in that region. The recommended next step is a proposed shift_traffic action to reroute traffic away from the degraded region, which is currently blocked pending mandatory safety review approval.\n\nFor incident inc-002, the affected system is the auth-session service in ap-south-1. The likely impact involves regional session performance degradation and elevated authentication latency following a recent deployment. The recommended next step is a proposed roll_back_recent_deploy action to return the service to its previous stable release, which is currently blocked awaiting required safety check approvals.\n\nFor incident inc-003, the affected system is the payments-ledger service. The likely impact is significant global delays in customer withdrawal processing and an increased risk of reconciliation divergence across ledger accounts due to massive retry accumulation. The proposed next step is a pause_retries mitigation to halt backpressure build-up, but this action is currently blocked and requires manual approval because of a change freeze on the critical dependency path.\n\nFor incident inc-004, the affected system is the risk-engine service. The likely impact is false-positive rejections of valid automated trades and user account actions resulting from a 23% decision distribution drift following a model update. The proposed next step is a roll_back_model action to restore baseline decision accuracy, which is currently blocked pending safety review approval.\n\nFor incident inc-005, the affected system is the internal-dev-agent service. The likely impact is limited to internal operational spend increases from elevated LLM token consumption and minor delays across internal developer workflows, with no external customer impact. The recommended next step is to execute a cap_token_budget action alongside job rate limiting, and no proposed actions are blocked.\n\nFor incident inc-006, the affected system is the market-data-stream service in us-east-1. The likely impact is elevated p99 latency and minor regional data feed delays, while core trade execution operations remain fully intact. The recommended next step is a throttle_non_critical_consumers action to alleviate pipeline load, and no mitigation steps are blocked."
+              }
+            ],
+            "role": "model"
+          }
+        }
+      ],
+      "eval_case_id": "public_stakeholder_drafting",
+      "agent_data": {
+        "agents": {
+          "root_agent": {
+            "agent_id": "root_agent",
+            "agent_type": "LlmAgent",
+            "description": "",
+            "instruction": "You are an incident-command assistant. For incident questions, call summarize_pair with the pair name (default public) and the pipeline focus requested by the user. Use focus=overview only when no specific stage is requested. Ground your answer only in that tool output and follow the requested response format. Never claim that actions were executed — recommendations only. Do not treat trade-execution dependency failures, payments reconciliation backlog, or rollout-related risk-engine drift as low importance without strong justification from the tool output.",
+            "tools": [
+              {
+                "function_declarations": [
+                  {
+                    "description": "Summarize incident command artifacts for a pair folder.\n\nArgs:\n    pair: Name of the folder under pipeline_files/ (also the session id).\n    focus: Pipeline area to summarize. Use overview unless the user asks\n        about a specific stage.\n\nReturns:\n    Grounding evidence for the requested pipeline area.",
+                    "name": "summarize_pair",
+                    "parameters_json_schema": {
+                      "properties": {
+                        "pair": {
+                          "default": "public",
+                          "title": "Pair",
+                          "type": "string"
+                        },
+                        "focus": {
+                          "default": "overview",
+                          "title": "Focus",
+                          "type": "string"
+                        }
+                      },
+                      "title": "summarize_pairParams",
+                      "type": "object"
+                    },
+                    "response_json_schema": {
+                      "type": "string"
+                    }
+                  }
+                ]
+              }
+            ],
+            "sub_agents": []
+          }
+        },
+        "turns": [
+          {
+            "turn_index": 0,
+            "turn_id": "turn_0",
+            "events": [
+              {
+                "author": "root_agent",
+                "content": {
+                  "parts": [
+                    {
+                      "function_call": {
+                        "id": "call_598478",
+                        "args": {
+                          "pair": "public",
+                          "focus": "stakeholder_drafting"
+                        },
+                        "name": "summarize_pair"
+                      }
+                    }
+                  ],
+                  "role": "model"
+                },
+                "event_time": "2026-08-30T09:22:20.849432Z"
+              },
+              {
+                "author": "root_agent",
+                "content": {
+                  "parts": [
+                    {
+                      "function_response": {
+                        "id": "call_598478",
+                        "name": "summarize_pair",
+                        "response": {
+                          "result": "Stakeholder drafting evidence for pair=public.\ninc-001 engineering update: We are responding to a sev1 incident involving market-data-stream and downstream trade-execution services in eu-west-1. The issue is suspected to be caused by network packet retransmissions and websocket fanout failures creating severe consumer lag. The technical impact is cascading quote fetch timeouts and elevated latency during trade executions. Our immediate next step is to initiate a shift_traffic action to reroute traffic away from the degraded region. This proposed shift_traffic action is currently blocked pending mandatory safety review approval. Executive update: A sev1 incident is currently impacting the market-data-stream service for customers operating in the eu-west-1 region. Due to underlying network and streaming failures, customers may encounter delayed or failing trade executions along with stale pricing. To contain the disruption, the team has proposed a traffic shift (shift_traffic) away from the affected region. Traffic redirection is presently queued for required safety approvals before it is executed to ensure safe containment.\ninc-002 engineering update: We have declared a sev2 incident for the auth-session service in the ap-south-1 region following sustained CPU utilization above 92%. The suspected cause is a regression or resource leak introduced in the deployment completed 12 minutes prior to alerting. Technical impact includes regional session performance degradation and elevated authentication latency. Our immediate proposed action is to execute roll_back_recent_deploy to return the service to its previous stable release. This remediation action is currently blocked pending required safety check approvals. Executive update: We are managing a sev2 incident impacting the auth-session service for users in the ap-south-1 region. Customers in this region may encounter authentication delays and session performance degradation following a recent deployment. Containment is underway, with a roll_back_recent_deploy action prepared and awaiting safety approval before execution. We will share further updates once the rollback has been authorized and completed.\ninc-003 engineering update: We are actively investigating a SEV1 incident affecting the payments-ledger service where withdrawal reconciliation queue depth has exceeded 18,000 items. The suspected cause is external settlement provider callback delays that have triggered massive retry accumulation globally. This creates significant delays in withdrawal processing and heightened risk of reconciliation divergence across ledger accounts. Our immediate proposed mitigation is to execute pause_retries to halt backpressure build-up. However, this action is currently blocked and requires manual approval due to a change freeze on the critical dependency path. Executive update: We are currently responding to a SEV1 incident affecting our payments-ledger service that is creating noticeable delays in customer withdrawal processing globally. The disruption is linked to response latency from an external settlement partner. Our technical teams have identified a containment step to pause automated retries while coordinating with the vendor. This containment action is currently pending review under our change freeze safety controls before deployment.\ninc-004 engineering update: The risk-engine service is currently experiencing a sev1 incident following a 23% decision distribution drift from baseline. The suspected cause is a faulty or miscalibrated model version deployed approximately 40 minutes prior. This issue is driving false-positive rejections across automated trade and user action evaluations in the affected region. Our primary proposed action is to execute roll_back_model to restore baseline decision accuracy. This roll_back_model action is currently blocked pending required safety approvals before it can proceed. Executive update: We are responding to a sev1 incident impacting our risk-engine service due to an issue with a recently deployed model update. Customers in the affected region may experience unintended rejections on valid trades and account actions. Our team has proposed roll_back_model to return the system to its prior stable state. The rollback is currently held pending safety review approval to guarantee safe containment.\ninc-005 engineering update: Incident inc-005 has been logged at sev3 severity affecting the internal-dev-agent service. The suspected cause is unbounded concurrent code review execution loops resulting in LLM token consumption reaching 4.6x the normal baseline. Likely impact is limited to internal operational spend increases and minor delays across developer tooling workflows. As an immediate next step, the engineering team recommends executing the top proposed action, cap_token_budget, alongside job rate limiting. Safety checks have verified that no proposed actions are currently blocked by safety guardrails. Executive update: We are actively managing a sev3 incident involving abnormal resource consumption by our internal-dev-agent developer tooling. The spike is driven by automated code review batch jobs, leading to elevated internal operating costs. There is no customer-facing impact and no risk to external production services. Containment is currently focused on applying a token budget cap to stabilize consumption.\ninc-006 engineering update: We are actively responding to a sev2 incident on the market-data-stream service in us-east-1 where p99 latency has spiked to 170ms. The likely cause is identified as a local regional consumer load spike or downstream consumer processing delay. The technical impact remains constrained to regional market data feeds without packet loss or cascading impacts to trade execution. Our immediate next step is the top proposed action, throttle_non_critical_consumers, to alleviate load on the streaming pipeline. Automated safety checks have evaluated this action as safe, with no mitigation steps currently blocked. Executive update: We are currently addressing a sev2 performance degradation affecting the market-data-stream service in the us-east-1 region. Customers and market data consumers in this region may experience minor data latency, though core trade execution operations remain fully intact without failure. The suspected cause is an isolated regional consumer processing load spike. Containment is actively underway with a recommended throttle_non_critical_consumers action that has passed all safety validations."
+                        }
+                      }
+                    }
+                  ],
+                  "role": "user"
+                },
+                "event_time": "2026-08-30T09:22:23.265099Z"
+              },
+              {
+                "author": "root_agent",
+                "content": {
+                  "parts": [
+                    {
+                      "text": "Every incident in the stakeholder drafting artifacts for pair public, spanning inc-001 through inc-006, contains both a distinct engineering commander update and an executive update.\n\nFor incident inc-001, the affected systems are market-data-stream and downstream trade-execution services in eu-west-1. The likely impact includes cascading quote fetch timeouts, elevated latency, stale pricing, and delayed or failing trade executions for customers in that region. The recommended next step is a proposed shift_traffic action to reroute traffic away from the degraded region, which is currently blocked pending mandatory safety review approval.\n\nFor incident inc-002, the affected system is the auth-session service in ap-south-1. The likely impact involves regional session performance degradation and elevated authentication latency following a recent deployment. The recommended next step is a proposed roll_back_recent_deploy action to return the service to its previous stable release, which is currently blocked awaiting required safety check approvals.\n\nFor incident inc-003, the affected system is the payments-ledger service. The likely impact is significant global delays in customer withdrawal processing and an increased risk of reconciliation divergence across ledger accounts due to massive retry accumulation. The proposed next step is a pause_retries mitigation to halt backpressure build-up, but this action is currently blocked and requires manual approval because of a change freeze on the critical dependency path.\n\nFor incident inc-004, the affected system is the risk-engine service. The likely impact is false-positive rejections of valid automated trades and user account actions resulting from a 23% decision distribution drift following a model update. The proposed next step is a roll_back_model action to restore baseline decision accuracy, which is currently blocked pending safety review approval.\n\nFor incident inc-005, the affected system is the internal-dev-agent service. The likely impact is limited to internal operational spend increases from elevated LLM token consumption and minor delays across internal developer workflows, with no external customer impact. The recommended next step is to execute a cap_token_budget action alongside job rate limiting, and no proposed actions are blocked.\n\nFor incident inc-006, the affected system is the market-data-stream service in us-east-1. The likely impact is elevated p99 latency and minor regional data feed delays, while core trade execution operations remain fully intact. The recommended next step is a throttle_non_critical_consumers action to alleviate pipeline load, and no mitigation steps are blocked."
+                    }
+                  ],
+                  "role": "model"
+                },
+                "event_time": "2026-08-30T09:22:23.267927Z"
+              }
+            ]
+          }
+        ]
+      },
+      "context": "Stakeholder drafting evidence for pair=public.\ninc-001 engineering update: We are responding to a sev1 incident involving market-data-stream and downstream trade-execution services in eu-west-1. The issue is suspected to be caused by network packet retransmissions and websocket fanout failures creating severe consumer lag. The technical impact is cascading quote fetch timeouts and elevated latency during trade executions. Our immediate next step is to initiate a shift_traffic action to reroute traffic away from the degraded region. This proposed shift_traffic action is currently blocked pending mandatory safety review approval. Executive update: A sev1 incident is currently impacting the market-data-stream service for customers operating in the eu-west-1 region. Due to underlying network and streaming failures, customers may encounter delayed or failing trade executions along with stale pricing. To contain the disruption, the team has proposed a traffic shift (shift_traffic) away from the affected region. Traffic redirection is presently queued for required safety approvals before it is executed to ensure safe containment.\ninc-002 engineering update: We have declared a sev2 incident for the auth-session service in the ap-south-1 region following sustained CPU utilization above 92%. The suspected cause is a regression or resource leak introduced in the deployment completed 12 minutes prior to alerting. Technical impact includes regional session performance degradation and elevated authentication latency. Our immediate proposed action is to execute roll_back_recent_deploy to return the service to its previous stable release. This remediation action is currently blocked pending required safety check approvals. Executive update: We are managing a sev2 incident impacting the auth-session service for users in the ap-south-1 region. Customers in this region may encounter authentication delays and session performance degradation following a recent deployment. Containment is underway, with a roll_back_recent_deploy action prepared and awaiting safety approval before execution. We will share further updates once the rollback has been authorized and completed.\ninc-003 engineering update: We are actively investigating a SEV1 incident affecting the payments-ledger service where withdrawal reconciliation queue depth has exceeded 18,000 items. The suspected cause is external settlement provider callback delays that have triggered massive retry accumulation globally. This creates significant delays in withdrawal processing and heightened risk of reconciliation divergence across ledger accounts. Our immediate proposed mitigation is to execute pause_retries to halt backpressure build-up. However, this action is currently blocked and requires manual approval due to a change freeze on the critical dependency path. Executive update: We are currently responding to a SEV1 incident affecting our payments-ledger service that is creating noticeable delays in customer withdrawal processing globally. The disruption is linked to response latency from an external settlement partner. Our technical teams have identified a containment step to pause automated retries while coordinating with the vendor. This containment action is currently pending review under our change freeze safety controls before deployment.\ninc-004 engineering update: The risk-engine service is currently experiencing a sev1 incident following a 23% decision distribution drift from baseline. The suspected cause is a faulty or miscalibrated model version deployed approximately 40 minutes prior. This issue is driving false-positive rejections across automated trade and user action evaluations in the affected region. Our primary proposed action is to execute roll_back_model to restore baseline decision accuracy. This roll_back_model action is currently blocked pending required safety approvals before it can proceed. Executive update: We are responding to a sev1 incident impacting our risk-engine service due to an issue with a recently deployed model update. Customers in the affected region may experience unintended rejections on valid trades and account actions. Our team has proposed roll_back_model to return the system to its prior stable state. The rollback is currently held pending safety review approval to guarantee safe containment.\ninc-005 engineering update: Incident inc-005 has been logged at sev3 severity affecting the internal-dev-agent service. The suspected cause is unbounded concurrent code review execution loops resulting in LLM token consumption reaching 4.6x the normal baseline. Likely impact is limited to internal operational spend increases and minor delays across developer tooling workflows. As an immediate next step, the engineering team recommends executing the top proposed action, cap_token_budget, alongside job rate limiting. Safety checks have verified that no proposed actions are currently blocked by safety guardrails. Executive update: We are actively managing a sev3 incident involving abnormal resource consumption by our internal-dev-agent developer tooling. The spike is driven by automated code review batch jobs, leading to elevated internal operating costs. There is no customer-facing impact and no risk to external production services. Containment is currently focused on applying a token budget cap to stabilize consumption.\ninc-006 engineering update: We are actively responding to a sev2 incident on the market-data-stream service in us-east-1 where p99 latency has spiked to 170ms. The likely cause is identified as a local regional consumer load spike or downstream consumer processing delay. The technical impact remains constrained to regional market data feeds without packet loss or cascading impacts to trade execution. Our immediate next step is the top proposed action, throttle_non_critical_consumers, to alleviate load on the streaming pipeline. Automated safety checks have evaluated this action as safe, with no mitigation steps currently blocked. Executive update: We are currently addressing a sev2 performance degradation affecting the market-data-stream service in the us-east-1 region. Customers and market data consumers in this region may experience minor data latency, though core trade execution operations remain fully intact without failure. The suspected cause is an isolated regional consumer processing load spike. Containment is actively underway with a recommended throttle_non_critical_consumers action that has passed all safety validations."
+    },
+    {
+      "prompt": {
+        "parts": [
+          {
+            "text": "Use summarize_pair with pair=public and focus=operator_review. Write only full sentences, not bullets or tables. Begin by saying this is persisted operator review for pair public. For every incident state the severity and action review statuses and any corrected values."
+          }
+        ],
+        "role": "user"
+      },
+      "responses": [
+        {
+          "response": {
+            "parts": [
+              {
+                "text": "This is persisted operator review for pair public. For incident inc-001, the severity review status was corrected with a corrected severity of sev0, and the action review status was accepted with no corrected action. For incident inc-002, the severity review status was accepted with no corrected severity, and the action review status was accepted with no corrected action. For incident inc-003, the severity review status was accepted with no corrected severity, and the action review status was accepted with no corrected action. For incident inc-004, the severity review status was accepted with no corrected severity, and the action review status was accepted with no corrected action. For incident inc-005, the severity review status was accepted with no corrected severity, and the action review status was accepted with no corrected action. For incident inc-006, the severity review status was accepted with no corrected severity, and the action review status was accepted with no corrected action."
+              }
+            ],
+            "role": "model"
+          }
+        }
+      ],
+      "eval_case_id": "public_operator_review",
+      "agent_data": {
+        "agents": {
+          "root_agent": {
+            "agent_id": "root_agent",
+            "agent_type": "LlmAgent",
+            "description": "",
+            "instruction": "You are an incident-command assistant. For incident questions, call summarize_pair with the pair name (default public) and the pipeline focus requested by the user. Use focus=overview only when no specific stage is requested. Ground your answer only in that tool output and follow the requested response format. Never claim that actions were executed — recommendations only. Do not treat trade-execution dependency failures, payments reconciliation backlog, or rollout-related risk-engine drift as low importance without strong justification from the tool output.",
+            "tools": [
+              {
+                "function_declarations": [
+                  {
+                    "description": "Summarize incident command artifacts for a pair folder.\n\nArgs:\n    pair: Name of the folder under pipeline_files/ (also the session id).\n    focus: Pipeline area to summarize. Use overview unless the user asks\n        about a specific stage.\n\nReturns:\n    Grounding evidence for the requested pipeline area.",
+                    "name": "summarize_pair",
+                    "parameters_json_schema": {
+                      "properties": {
+                        "pair": {
+                          "default": "public",
+                          "title": "Pair",
+                          "type": "string"
+                        },
+                        "focus": {
+                          "default": "overview",
+                          "title": "Focus",
+                          "type": "string"
+                        }
+                      },
+                      "title": "summarize_pairParams",
+                      "type": "object"
+                    },
+                    "response_json_schema": {
+                      "type": "string"
+                    }
+                  }
+                ]
+              }
+            ],
+            "sub_agents": []
+          }
+        },
+        "turns": [
+          {
+            "turn_index": 0,
+            "turn_id": "turn_0",
+            "events": [
+              {
+                "author": "root_agent",
+                "content": {
+                  "parts": [
+                    {
+                      "function_call": {
+                        "id": "call_713692",
+                        "args": {
+                          "focus": "operator_review",
+                          "pair": "public"
+                        },
+                        "name": "summarize_pair"
+                      }
+                    }
+                  ],
+                  "role": "model"
+                },
+                "event_time": "2026-08-30T09:22:32.841778Z"
+              },
+              {
+                "author": "root_agent",
+                "content": {
+                  "parts": [
+                    {
+                      "function_response": {
+                        "id": "call_713692",
+                        "name": "summarize_pair",
+                        "response": {
+                          "result": "Operator review evidence for pair=public.\ninc-001 severity review was accepted and action review was accepted; original severity was sev1 and corrected severity was None; original action was shift_traffic and corrected action was None.\ninc-002 severity review was accepted and action review was accepted; original severity was sev2 and corrected severity was None; original action was roll_back_recent_deploy and corrected action was None.\ninc-003 severity review was accepted and action review was accepted; original severity was sev1 and corrected severity was None; original action was pause_retries and corrected action was None.\ninc-004 severity review was accepted and action review was accepted; original severity was sev1 and corrected severity was None; original action was roll_back_model and corrected action was None.\ninc-005 severity review was accepted and action review was accepted; original severity was sev3 and corrected severity was None; original action was cap_token_budget and corrected action was None.\ninc-006 severity review was accepted and action review was accepted; original severity was sev2 and corrected severity was None; original action was throttle_non_critical_consumers and corrected action was None.\ninc-001 severity review was accepted and action review was accepted; original severity was sev1 and corrected severity was None; original action was shift_traffic and corrected action was None.\ninc-002 severity review was accepted and action review was accepted; original severity was sev2 and corrected severity was None; original action was roll_back_recent_deploy and corrected action was None.\ninc-003 severity review was accepted and action review was accepted; original severity was sev1 and corrected severity was None; original action was pause_retries and corrected action was None.\ninc-004 severity review was accepted and action review was accepted; original severity was sev1 and corrected severity was None; original action was roll_back_model and corrected action was None.\ninc-005 severity review was accepted and action review was accepted; original severity was sev3 and corrected severity was None; original action was cap_token_budget and corrected action was None.\ninc-006 severity review was accepted and action review was accepted; original severity was sev2 and corrected severity was None; original action was throttle_non_critical_consumers and corrected action was None.\ninc-001 severity review was accepted and action review was accepted; original severity was sev1 and corrected severity was None; original action was shift_traffic and corrected action was None.\ninc-002 severity review was accepted and action review was accepted; original severity was sev2 and corrected severity was None; original action was roll_back_recent_deploy and corrected action was None.\ninc-003 severity review was accepted and action review was accepted; original severity was sev1 and corrected severity was None; original action was pause_retries and corrected action was None.\ninc-004 severity review was accepted and action review was accepted; original severity was sev1 and corrected severity was None; original action was roll_back_model and corrected action was None.\ninc-005 severity review was accepted and action review was accepted; original severity was sev3 and corrected severity was None; original action was cap_token_budget and corrected action was None.\ninc-006 severity review was accepted and action review was accepted; original severity was sev2 and corrected severity was None; original action was throttle_non_critical_consumers and corrected action was None.\ninc-001 severity review was accepted and action review was accepted; original severity was sev1 and corrected severity was None; original action was shift_traffic and corrected action was None.\ninc-002 severity review was accepted and action review was accepted; original severity was sev2 and corrected severity was None; original action was roll_back_recent_deploy and corrected action was None.\ninc-003 severity review was accepted and action review was accepted; original severity was sev1 and corrected severity was None; original action was pause_retries and corrected action was None.\ninc-004 severity review was accepted and action review was accepted; original severity was sev1 and corrected severity was None; original action was roll_back_model and corrected action was None.\ninc-005 severity review was accepted and action review was accepted; original severity was sev3 and corrected severity was None; original action was cap_token_budget and corrected action was None.\ninc-006 severity review was accepted and action review was accepted; original severity was sev2 and corrected severity was None; original action was throttle_non_critical_consumers and corrected action was None.\ninc-001 severity review was accepted and action review was accepted; original severity was sev1 and corrected severity was None; original action was shift_traffic and corrected action was None.\ninc-002 severity review was accepted and action review was accepted; original severity was sev2 and corrected severity was None; original action was roll_back_recent_deploy and corrected action was None.\ninc-003 severity review was accepted and action review was accepted; original severity was sev1 and corrected severity was None; original action was pause_retries and corrected action was None.\ninc-004 severity review was accepted and action review was accepted; original severity was sev1 and corrected severity was None; original action was roll_back_model and corrected action was None.\ninc-005 severity review was accepted and action review was accepted; original severity was sev3 and corrected severity was None; original action was cap_token_budget and corrected action was None.\ninc-006 severity review was accepted and action review was accepted; original severity was sev2 and corrected severity was None; original action was throttle_non_critical_consumers and corrected action was None.\ninc-001 severity review was accepted and action review was accepted; original severity was sev1 and corrected severity was None; original action was shift_traffic and corrected action was None.\ninc-002 severity review was accepted and action review was accepted; original severity was sev2 and corrected severity was None; original action was roll_back_recent_deploy and corrected action was None.\ninc-003 severity review was accepted and action review was accepted; original severity was sev1 and corrected severity was None; original action was pause_retries and corrected action was None.\ninc-004 severity review was accepted and action review was accepted; original severity was sev1 and corrected severity was None; original action was roll_back_model and corrected action was None.\ninc-005 severity review was accepted and action review was accepted; original severity was sev3 and corrected severity was None; original action was cap_token_budget and corrected action was None.\ninc-006 severity review was accepted and action review was accepted; original severity was sev2 and corrected severity was None; original action was throttle_non_critical_consumers and corrected action was None.\ninc-001 severity review was corrected and action review was accepted; original severity was sev1 and corrected severity was sev0; original action was shift_traffic and corrected action was None.\ninc-002 severity review was accepted and action review was accepted; original severity was sev2 and corrected severity was None; original action was roll_back_recent_deploy and corrected action was None.\ninc-003 severity review was accepted and action review was accepted; original severity was sev1 and corrected severity was None; original action was pause_retries and corrected action was None.\ninc-004 severity review was accepted and action review was accepted; original severity was sev1 and corrected severity was None; original action was roll_back_model and corrected action was None.\ninc-005 severity review was accepted and action review was accepted; original severity was sev3 and corrected severity was None; original action was cap_token_budget and corrected action was None.\ninc-006 severity review was accepted and action review was accepted; original severity was sev2 and corrected severity was None; original action was throttle_non_critical_consumers and corrected action was None."
+                        }
+                      }
+                    }
+                  ],
+                  "role": "user"
+                },
+                "event_time": "2026-08-30T09:22:34.648780Z"
+              },
+              {
+                "author": "root_agent",
+                "content": {
+                  "parts": [
+                    {
+                      "text": "This is persisted operator review for pair public. For incident inc-001, the severity review status was corrected with a corrected severity of sev0, and the action review status was accepted with no corrected action. For incident inc-002, the severity review status was accepted with no corrected severity, and the action review status was accepted with no corrected action. For incident inc-003, the severity review status was accepted with no corrected severity, and the action review status was accepted with no corrected action. For incident inc-004, the severity review status was accepted with no corrected severity, and the action review status was accepted with no corrected action. For incident inc-005, the severity review status was accepted with no corrected severity, and the action review status was accepted with no corrected action. For incident inc-006, the severity review status was accepted with no corrected severity, and the action review status was accepted with no corrected action."
+                    }
+                  ],
+                  "role": "model"
+                },
+                "event_time": "2026-08-30T09:22:34.651244Z"
+              }
+            ]
+          }
+        ]
+      },
+      "context": "Operator review evidence for pair=public.\ninc-001 severity review was accepted and action review was accepted; original severity was sev1 and corrected severity was None; original action was shift_traffic and corrected action was None.\ninc-002 severity review was accepted and action review was accepted; original severity was sev2 and corrected severity was None; original action was roll_back_recent_deploy and corrected action was None.\ninc-003 severity review was accepted and action review was accepted; original severity was sev1 and corrected severity was None; original action was pause_retries and corrected action was None.\ninc-004 severity review was accepted and action review was accepted; original severity was sev1 and corrected severity was None; original action was roll_back_model and corrected action was None.\ninc-005 severity review was accepted and action review was accepted; original severity was sev3 and corrected severity was None; original action was cap_token_budget and corrected action was None.\ninc-006 severity review was accepted and action review was accepted; original severity was sev2 and corrected severity was None; original action was throttle_non_critical_consumers and corrected action was None.\ninc-001 severity review was accepted and action review was accepted; original severity was sev1 and corrected severity was None; original action was shift_traffic and corrected action was None.\ninc-002 severity review was accepted and action review was accepted; original severity was sev2 and corrected severity was None; original action was roll_back_recent_deploy and corrected action was None.\ninc-003 severity review was accepted and action review was accepted; original severity was sev1 and corrected severity was None; original action was pause_retries and corrected action was None.\ninc-004 severity review was accepted and action review was accepted; original severity was sev1 and corrected severity was None; original action was roll_back_model and corrected action was None.\ninc-005 severity review was accepted and action review was accepted; original severity was sev3 and corrected severity was None; original action was cap_token_budget and corrected action was None.\ninc-006 severity review was accepted and action review was accepted; original severity was sev2 and corrected severity was None; original action was throttle_non_critical_consumers and corrected action was None.\ninc-001 severity review was accepted and action review was accepted; original severity was sev1 and corrected severity was None; original action was shift_traffic and corrected action was None.\ninc-002 severity review was accepted and action review was accepted; original severity was sev2 and corrected severity was None; original action was roll_back_recent_deploy and corrected action was None.\ninc-003 severity review was accepted and action review was accepted; original severity was sev1 and corrected severity was None; original action was pause_retries and corrected action was None.\ninc-004 severity review was accepted and action review was accepted; original severity was sev1 and corrected severity was None; original action was roll_back_model and corrected action was None.\ninc-005 severity review was accepted and action review was accepted; original severity was sev3 and corrected severity was None; original action was cap_token_budget and corrected action was None.\ninc-006 severity review was accepted and action review was accepted; original severity was sev2 and corrected severity was None; original action was throttle_non_critical_consumers and corrected action was None.\ninc-001 severity review was accepted and action review was accepted; original severity was sev1 and corrected severity was None; original action was shift_traffic and corrected action was None.\ninc-002 severity review was accepted and action review was accepted; original severity was sev2 and corrected severity was None; original action was roll_back_recent_deploy and corrected action was None.\ninc-003 severity review was accepted and action review was accepted; original severity was sev1 and corrected severity was None; original action was pause_retries and corrected action was None.\ninc-004 severity review was accepted and action review was accepted; original severity was sev1 and corrected severity was None; original action was roll_back_model and corrected action was None.\ninc-005 severity review was accepted and action review was accepted; original severity was sev3 and corrected severity was None; original action was cap_token_budget and corrected action was None.\ninc-006 severity review was accepted and action review was accepted; original severity was sev2 and corrected severity was None; original action was throttle_non_critical_consumers and corrected action was None.\ninc-001 severity review was accepted and action review was accepted; original severity was sev1 and corrected severity was None; original action was shift_traffic and corrected action was None.\ninc-002 severity review was accepted and action review was accepted; original severity was sev2 and corrected severity was None; original action was roll_back_recent_deploy and corrected action was None.\ninc-003 severity review was accepted and action review was accepted; original severity was sev1 and corrected severity was None; original action was pause_retries and corrected action was None.\ninc-004 severity review was accepted and action review was accepted; original severity was sev1 and corrected severity was None; original action was roll_back_model and corrected action was None.\ninc-005 severity review was accepted and action review was accepted; original severity was sev3 and corrected severity was None; original action was cap_token_budget and corrected action was None.\ninc-006 severity review was accepted and action review was accepted; original severity was sev2 and corrected severity was None; original action was throttle_non_critical_consumers and corrected action was None.\ninc-001 severity review was accepted and action review was accepted; original severity was sev1 and corrected severity was None; original action was shift_traffic and corrected action was None.\ninc-002 severity review was accepted and action review was accepted; original severity was sev2 and corrected severity was None; original action was roll_back_recent_deploy and corrected action was None.\ninc-003 severity review was accepted and action review was accepted; original severity was sev1 and corrected severity was None; original action was pause_retries and corrected action was None.\ninc-004 severity review was accepted and action review was accepted; original severity was sev1 and corrected severity was None; original action was roll_back_model and corrected action was None.\ninc-005 severity review was accepted and action review was accepted; original severity was sev3 and corrected severity was None; original action was cap_token_budget and corrected action was None.\ninc-006 severity review was accepted and action review was accepted; original severity was sev2 and corrected severity was None; original action was throttle_non_critical_consumers and corrected action was None.\ninc-001 severity review was corrected and action review was accepted; original severity was sev1 and corrected severity was sev0; original action was shift_traffic and corrected action was None.\ninc-002 severity review was accepted and action review was accepted; original severity was sev2 and corrected severity was None; original action was roll_back_recent_deploy and corrected action was None.\ninc-003 severity review was accepted and action review was accepted; original severity was sev1 and corrected severity was None; original action was pause_retries and corrected action was None.\ninc-004 severity review was accepted and action review was accepted; original severity was sev1 and corrected severity was None; original action was roll_back_model and corrected action was None.\ninc-005 severity review was accepted and action review was accepted; original severity was sev3 and corrected severity was None; original action was cap_token_budget and corrected action was None.\ninc-006 severity review was accepted and action review was accepted; original severity was sev2 and corrected severity was None; original action was throttle_non_critical_consumers and corrected action was None."
+    },
+    {
+      "prompt": {
+        "parts": [
+          {
+            "text": "Use summarize_pair with pair=public and focus=feedback_and_redecision. Write only full sentences, not bullets or tables. Report feedback-driven re-decision results for pair public. State how many feedback records, severity rows, and action rows were used or produced; confirm whether re-grouping, severity, and action re-decision calls logged injected few-shot feedback; summarize the re-decided results."
+          }
+        ],
+        "role": "user"
+      },
+      "responses": [
+        {
+          "response": {
+            "parts": [
+              {
+                "text": "For pair public, the feedback-driven re-decision process utilized 42 operator feedback records and produced 6 severity rows along with 6 recommended action rows. Re-grouping, severity, and action re-decision stages confirmed the injection of few-shot feedback, with 16 total re-decision calls logging that few-shot examples were included across 2 incident grouping calls, 2 severity re-decision calls, and 12 action re-decision calls. \n\nIn the re-decided results, incident inc-001 is categorized as sev0 under monitoring due to a critical trade execution dependency failure on market-data-stream in eu-west-1, with a recommendation to shift traffic to healthy regional streams. Incident inc-002 is classified as sev2 open due to a post-deployment compute efficiency regression on auth-session instances in ap-south-1, with a recommendation to roll back the recent deployment. Incident inc-003 is evaluated as sev1 open for a payments reconciliation backlog exceeding 18,000 items, with a recommendation to pause retries to mitigate the processor retry storm. Incident inc-004 is designated as sev1 open because of a 23 percent rollout-related risk-engine drift causing false-positive transaction blocks, with a recommendation to roll back the model. Incident inc-005 is determined to be sev3 open due to an internal LLM token consumption surge driven by batch review workloads, with a recommendation to cap the token budget. Incident inc-006 is assessed as sev2 open for localized p99 pricing latency elevation in us-east-1 on market-data-stream, with a recommendation to throttle non-critical consumers."
+              }
+            ],
+            "role": "model"
+          }
+        }
+      ],
+      "eval_case_id": "public_feedback_and_redecision",
+      "agent_data": {
+        "agents": {
+          "root_agent": {
+            "agent_id": "root_agent",
+            "agent_type": "LlmAgent",
+            "description": "",
+            "instruction": "You are an incident-command assistant. For incident questions, call summarize_pair with the pair name (default public) and the pipeline focus requested by the user. Use focus=overview only when no specific stage is requested. Ground your answer only in that tool output and follow the requested response format. Never claim that actions were executed — recommendations only. Do not treat trade-execution dependency failures, payments reconciliation backlog, or rollout-related risk-engine drift as low importance without strong justification from the tool output.",
+            "tools": [
+              {
+                "function_declarations": [
+                  {
+                    "description": "Summarize incident command artifacts for a pair folder.\n\nArgs:\n    pair: Name of the folder under pipeline_files/ (also the session id).\n    focus: Pipeline area to summarize. Use overview unless the user asks\n        about a specific stage.\n\nReturns:\n    Grounding evidence for the requested pipeline area.",
+                    "name": "summarize_pair",
+                    "parameters_json_schema": {
+                      "properties": {
+                        "pair": {
+                          "default": "public",
+                          "title": "Pair",
+                          "type": "string"
+                        },
+                        "focus": {
+                          "default": "overview",
+                          "title": "Focus",
+                          "type": "string"
+                        }
+                      },
+                      "title": "summarize_pairParams",
+                      "type": "object"
+                    },
+                    "response_json_schema": {
+                      "type": "string"
+                    }
+                  }
+                ]
+              }
+            ],
+            "sub_agents": []
+          }
+        },
+        "turns": [
+          {
+            "turn_index": 0,
+            "turn_id": "turn_0",
+            "events": [
+              {
+                "author": "root_agent",
+                "content": {
+                  "parts": [
+                    {
+                      "function_call": {
+                        "id": "call_419015",
+                        "args": {
+                          "focus": "feedback_and_redecision",
+                          "pair": "public"
+                        },
+                        "name": "summarize_pair"
+                      }
+                    }
+                  ],
+                  "role": "model"
+                },
+                "event_time": "2026-08-30T09:22:41.015632Z"
+              },
+              {
+                "author": "root_agent",
+                "content": {
+                  "parts": [
+                    {
+                      "function_response": {
+                        "id": "call_419015",
+                        "name": "summarize_pair",
+                        "response": {
+                          "result": "Feedback and re-decision evidence for pair=public.\nOperator feedback records available: 42.\nRe-decision produced 6 severity rows and 6 action rows.\n16 re-decision LLM calls explicitly logged few_shot_examples_included=true.\nFeedback-injected call counts by stage: {\"action_redecision\":12,\"incident_grouping_redecision\":2,\"severity_redecision\":2}.\nSeverity re-decision rows: [{\"business_impact\":\"Direct customer-facing impact with delayed and failing trade execution orders in eu-west-1, exposing the platform to severe financial and execution risk.\",\"incident_id\":\"inc-001\",\"reasoning\":\"Direct trade execution dependency failure causing critical trading platform disruption across multiple services.\",\"severity\":\"sev0\",\"status\":\"monitoring\",\"technical_impact\":\"Cascading quote fetch timeouts in downstream trade-execution service caused by packet retransmits and websocket fanout exhaustion on market-data-stream.\"},{\"business_impact\":\"Potential latency or authentication degradation for users in ap-south-1 if load increases.\",\"incident_id\":\"inc-002\",\"reasoning\":\"Rollout-correlated compute efficiency regression on a high-tier identity service isolated to a single region without current customer outage.\",\"severity\":\"sev2\",\"status\":\"open\",\"technical_impact\":\"Sustained CPU utilization above 92% on auth-session instances following a recent deployment.\"},{\"business_impact\":\"Customer withdrawal delays and ledger settlement backlog, creating financial settlement risk across global accounts.\",\"incident_id\":\"inc-003\",\"reasoning\":\"Payments reconciliation backlog on a critical-tier ledger service with global financial correctness implications.\",\"severity\":\"sev1\",\"status\":\"open\",\"technical_impact\":\"Reconciliation queue depth exceeding 18,000 items driven by settlement callback latency and an escalating processor retry storm.\"},{\"business_impact\":\"Valid customer transactions erroneously blocked or flagged due to false-positive risk evaluations.\",\"incident_id\":\"inc-004\",\"reasoning\":\"Rollout-related risk-engine drift on a critical service directly impacting transaction processing correctness and compliance evaluation.\",\"severity\":\"sev1\",\"status\":\"open\",\"technical_impact\":\"23% decision distribution drift from baseline on risk-engine following new model deployment.\"},{\"business_impact\":\"Internal infrastructure and LLM budget cost spike without customer-facing or revenue impact.\",\"incident_id\":\"inc-005\",\"reasoning\":\"Internal developer productivity service incident with no trading, security, or customer transaction exposure.\",\"severity\":\"sev3\",\"status\":\"open\",\"technical_impact\":\"Surge of 4.6x baseline in LLM token consumption driven by autonomous batch review workloads.\"},{\"business_impact\":\"Minor pricing latency elevation in us-east-1 without trading halts or execution order drops.\",\"incident_id\":\"inc-006\",\"reasoning\":\"Critical service latency increase confined to a single region with safe degradation and no downstream cascading failures.\",\"severity\":\"sev2\",\"status\":\"open\",\"technical_impact\":\"p99 latency elevated to 170ms on market-data-stream in us-east-1 without packet loss.\"}].\nAction re-decision rows: [{\"action\":\"shift_traffic\",\"expected_effect\":\"Reroutes trade execution traffic to healthy regional market-data streams, mitigating quote fetch timeouts and trade execution failures.\",\"incident_id\":\"inc-001\",\"risk\":\"Increased cross-region latency and higher load on the destination region.\",\"safety_level\":\"needs_approval\",\"why\":\"Degradation and websocket fanout exhaustion in eu-west-1 are causing cascading trade execution failures; runbook specifies preferring regional isolation before restarting components.\"},{\"action\":\"roll_back_recent_deploy\",\"expected_effect\":\"Restores CPU utilization to normal baseline levels by reverting the compute efficiency regression.\",\"incident_id\":\"inc-002\",\"risk\":\"Reverts any new features or bug fixes delivered in the latest deployment.\",\"safety_level\":\"needs_approval\",\"why\":\"High CPU utilization started immediately after a deployment completed 12 minutes ago under normal traffic conditions.\"},{\"action\":\"pause_retries\",\"expected_effect\":\"Stops immediate queue growth and relieves pressure on the external provider to stabilize processing.\",\"incident_id\":\"inc-003\",\"risk\":\"Pending transactions requiring retry remain queued until retries are safely resumed.\",\"safety_level\":\"safe\",\"why\":\"Halts the processor retry storm that is compounding external callback latency and exacerbating queue depth.\"},{\"action\":\"roll_back_model\",\"expected_effect\":\"Reverts risk evaluation scoring to baseline distribution and stops erroneous transaction blocks.\",\"incident_id\":\"inc-004\",\"risk\":\"Temporarily delays new model capabilities while returning to known stable decision boundaries.\",\"safety_level\":\"safe\",\"why\":\"A 23% decision distribution drift and customer false positives immediately followed the new model deployment.\"},{\"action\":\"cap_token_budget\",\"expected_effect\":\"Enforces an immediate spend ceiling on LLM API usage, preventing further budget overruns.\",\"incident_id\":\"inc-005\",\"risk\":\"Autonomous code review batch jobs exceeding the threshold may be throttled or fail to complete.\",\"safety_level\":\"safe\",\"why\":\"LLM token consumption has surged to 4.6x baseline due to uncapped autonomous code review workloads.\"},{\"action\":\"throttle_non_critical_consumers\",\"expected_effect\":\"Reduces stream processing load and host contention, returning p99 latency to baseline levels without dropping live ticks.\",\"incident_id\":\"inc-006\",\"risk\":\"Delayed updates for non-critical analytics or reporting consumers.\",\"safety_level\":\"safe\",\"why\":\"Local consumer lag and throughput constraints in us-east-1 are driving elevated p99 latency on the market-data stream.\"}]."
+                        }
+                      }
+                    }
+                  ],
+                  "role": "user"
+                },
+                "event_time": "2026-08-30T09:22:43.759860Z"
+              },
+              {
+                "author": "root_agent",
+                "content": {
+                  "parts": [
+                    {
+                      "text": "For pair public, the feedback-driven re-decision process utilized 42 operator feedback records and produced 6 severity rows along with 6 recommended action rows. Re-grouping, severity, and action re-decision stages confirmed the injection of few-shot feedback, with 16 total re-decision calls logging that few-shot examples were included across 2 incident grouping calls, 2 severity re-decision calls, and 12 action re-decision calls. \n\nIn the re-decided results, incident inc-001 is categorized as sev0 under monitoring due to a critical trade execution dependency failure on market-data-stream in eu-west-1, with a recommendation to shift traffic to healthy regional streams. Incident inc-002 is classified as sev2 open due to a post-deployment compute efficiency regression on auth-session instances in ap-south-1, with a recommendation to roll back the recent deployment. Incident inc-003 is evaluated as sev1 open for a payments reconciliation backlog exceeding 18,000 items, with a recommendation to pause retries to mitigate the processor retry storm. Incident inc-004 is designated as sev1 open because of a 23 percent rollout-related risk-engine drift causing false-positive transaction blocks, with a recommendation to roll back the model. Incident inc-005 is determined to be sev3 open due to an internal LLM token consumption surge driven by batch review workloads, with a recommendation to cap the token budget. Incident inc-006 is assessed as sev2 open for localized p99 pricing latency elevation in us-east-1 on market-data-stream, with a recommendation to throttle non-critical consumers."
+                    }
+                  ],
+                  "role": "model"
+                },
+                "event_time": "2026-08-30T09:22:43.763260Z"
+              }
+            ]
+          }
+        ]
+      },
+      "context": "Feedback and re-decision evidence for pair=public.\nOperator feedback records available: 42.\nRe-decision produced 6 severity rows and 6 action rows.\n16 re-decision LLM calls explicitly logged few_shot_examples_included=true.\nFeedback-injected call counts by stage: {\"action_redecision\":12,\"incident_grouping_redecision\":2,\"severity_redecision\":2}.\nSeverity re-decision rows: [{\"business_impact\":\"Direct customer-facing impact with delayed and failing trade execution orders in eu-west-1, exposing the platform to severe financial and execution risk.\",\"incident_id\":\"inc-001\",\"reasoning\":\"Direct trade execution dependency failure causing critical trading platform disruption across multiple services.\",\"severity\":\"sev0\",\"status\":\"monitoring\",\"technical_impact\":\"Cascading quote fetch timeouts in downstream trade-execution service caused by packet retransmits and websocket fanout exhaustion on market-data-stream.\"},{\"business_impact\":\"Potential latency or authentication degradation for users in ap-south-1 if load increases.\",\"incident_id\":\"inc-002\",\"reasoning\":\"Rollout-correlated compute efficiency regression on a high-tier identity service isolated to a single region without current customer outage.\",\"severity\":\"sev2\",\"status\":\"open\",\"technical_impact\":\"Sustained CPU utilization above 92% on auth-session instances following a recent deployment.\"},{\"business_impact\":\"Customer withdrawal delays and ledger settlement backlog, creating financial settlement risk across global accounts.\",\"incident_id\":\"inc-003\",\"reasoning\":\"Payments reconciliation backlog on a critical-tier ledger service with global financial correctness implications.\",\"severity\":\"sev1\",\"status\":\"open\",\"technical_impact\":\"Reconciliation queue depth exceeding 18,000 items driven by settlement callback latency and an escalating processor retry storm.\"},{\"business_impact\":\"Valid customer transactions erroneously blocked or flagged due to false-positive risk evaluations.\",\"incident_id\":\"inc-004\",\"reasoning\":\"Rollout-related risk-engine drift on a critical service directly impacting transaction processing correctness and compliance evaluation.\",\"severity\":\"sev1\",\"status\":\"open\",\"technical_impact\":\"23% decision distribution drift from baseline on risk-engine following new model deployment.\"},{\"business_impact\":\"Internal infrastructure and LLM budget cost spike without customer-facing or revenue impact.\",\"incident_id\":\"inc-005\",\"reasoning\":\"Internal developer productivity service incident with no trading, security, or customer transaction exposure.\",\"severity\":\"sev3\",\"status\":\"open\",\"technical_impact\":\"Surge of 4.6x baseline in LLM token consumption driven by autonomous batch review workloads.\"},{\"business_impact\":\"Minor pricing latency elevation in us-east-1 without trading halts or execution order drops.\",\"incident_id\":\"inc-006\",\"reasoning\":\"Critical service latency increase confined to a single region with safe degradation and no downstream cascading failures.\",\"severity\":\"sev2\",\"status\":\"open\",\"technical_impact\":\"p99 latency elevated to 170ms on market-data-stream in us-east-1 without packet loss.\"}].\nAction re-decision rows: [{\"action\":\"shift_traffic\",\"expected_effect\":\"Reroutes trade execution traffic to healthy regional market-data streams, mitigating quote fetch timeouts and trade execution failures.\",\"incident_id\":\"inc-001\",\"risk\":\"Increased cross-region latency and higher load on the destination region.\",\"safety_level\":\"needs_approval\",\"why\":\"Degradation and websocket fanout exhaustion in eu-west-1 are causing cascading trade execution failures; runbook specifies preferring regional isolation before restarting components.\"},{\"action\":\"roll_back_recent_deploy\",\"expected_effect\":\"Restores CPU utilization to normal baseline levels by reverting the compute efficiency regression.\",\"incident_id\":\"inc-002\",\"risk\":\"Reverts any new features or bug fixes delivered in the latest deployment.\",\"safety_level\":\"needs_approval\",\"why\":\"High CPU utilization started immediately after a deployment completed 12 minutes ago under normal traffic conditions.\"},{\"action\":\"pause_retries\",\"expected_effect\":\"Stops immediate queue growth and relieves pressure on the external provider to stabilize processing.\",\"incident_id\":\"inc-003\",\"risk\":\"Pending transactions requiring retry remain queued until retries are safely resumed.\",\"safety_level\":\"safe\",\"why\":\"Halts the processor retry storm that is compounding external callback latency and exacerbating queue depth.\"},{\"action\":\"roll_back_model\",\"expected_effect\":\"Reverts risk evaluation scoring to baseline distribution and stops erroneous transaction blocks.\",\"incident_id\":\"inc-004\",\"risk\":\"Temporarily delays new model capabilities while returning to known stable decision boundaries.\",\"safety_level\":\"safe\",\"why\":\"A 23% decision distribution drift and customer false positives immediately followed the new model deployment.\"},{\"action\":\"cap_token_budget\",\"expected_effect\":\"Enforces an immediate spend ceiling on LLM API usage, preventing further budget overruns.\",\"incident_id\":\"inc-005\",\"risk\":\"Autonomous code review batch jobs exceeding the threshold may be throttled or fail to complete.\",\"safety_level\":\"safe\",\"why\":\"LLM token consumption has surged to 4.6x baseline due to uncapped autonomous code review workloads.\"},{\"action\":\"throttle_non_critical_consumers\",\"expected_effect\":\"Reduces stream processing load and host contention, returning p99 latency to baseline levels without dropping live ticks.\",\"incident_id\":\"inc-006\",\"risk\":\"Delayed updates for non-critical analytics or reporting consumers.\",\"safety_level\":\"safe\",\"why\":\"Local consumer lag and throughput constraints in us-east-1 are driving elevated p99 latency on the market-data stream.\"}]."
+    },
+    {
+      "prompt": {
+        "parts": [
+          {
+            "text": "Use summarize_pair with pair=public and focus=comparison. Write only full sentences, not bullets or tables. Begin by saying this is the before-and-after comparison for pair public. State original, operator, and re-decided severity and top action for each incident, whether each moved toward operator feedback, and all agreement-delta count and rate values."
+          }
+        ],
+        "role": "user"
+      },
+      "responses": [
+        {
+          "response": {
+            "parts": [
+              {
+                "text": "This is the before-and-after comparison for pair public. \n\nFor incident inc-001, the original severity was sev1 with recommended top action shift_traffic, the operator feedback specified severity sev0 and action shift_traffic, and the re-decided severity became sev0 with recommended top action shift_traffic, which moved toward operator feedback. \n\nFor incident inc-002, the original severity was sev2 with recommended top action roll_back_recent_deploy, the operator feedback specified severity sev2 and action roll_back_recent_deploy, and the re-decided severity was sev2 with recommended top action roll_back_recent_deploy, which moved toward operator feedback. \n\nFor incident inc-003, the original severity was sev1 with recommended top action pause_retries, the operator feedback specified severity sev1 and action pause_retries, and the re-decided severity was sev1 with recommended top action pause_retries, which moved toward operator feedback. \n\nFor incident inc-004, the original severity was sev1 with recommended top action roll_back_model, the operator feedback specified severity sev1 and action roll_back_model, and the re-decided severity was sev1 with recommended top action roll_back_model, which moved toward operator feedback. \n\nFor incident inc-005, the original severity was sev3 with recommended top action cap_token_budget, the operator feedback specified severity sev3 and action cap_token_budget, and the re-decided severity was sev3 with recommended top action cap_token_budget, which moved toward operator feedback. \n\nFor incident inc-006, the original severity was sev2 with recommended top action throttle_non_critical_consumers, the operator feedback specified severity sev2 and action throttle_non_critical_consumers, and the re-decided severity was sev2 with recommended top action throttle_non_critical_consumers, which moved toward operator feedback. \n\nRegarding agreement-delta metrics across all 6 labeled incidents, the action before matches count was 6, the action after matches count was 6, the action count delta was 0, the action rate before was 1.0, the action rate after was 1.0, and the action rate delta was 0.0. The severity before matches count was 5, the severity after matches count was 6, the severity count delta was 1, the severity rate before was approximately 0.8333 (0.8333333333333334), the severity rate after was 1.0, and the severity rate delta was approximately 0.1667 (0.16666666666666663)."
+              }
+            ],
+            "role": "model"
+          }
+        }
+      ],
+      "eval_case_id": "public_comparison",
+      "agent_data": {
+        "agents": {
+          "root_agent": {
+            "agent_id": "root_agent",
+            "agent_type": "LlmAgent",
+            "description": "",
+            "instruction": "You are an incident-command assistant. For incident questions, call summarize_pair with the pair name (default public) and the pipeline focus requested by the user. Use focus=overview only when no specific stage is requested. Ground your answer only in that tool output and follow the requested response format. Never claim that actions were executed — recommendations only. Do not treat trade-execution dependency failures, payments reconciliation backlog, or rollout-related risk-engine drift as low importance without strong justification from the tool output.",
+            "tools": [
+              {
+                "function_declarations": [
+                  {
+                    "description": "Summarize incident command artifacts for a pair folder.\n\nArgs:\n    pair: Name of the folder under pipeline_files/ (also the session id).\n    focus: Pipeline area to summarize. Use overview unless the user asks\n        about a specific stage.\n\nReturns:\n    Grounding evidence for the requested pipeline area.",
+                    "name": "summarize_pair",
+                    "parameters_json_schema": {
+                      "properties": {
+                        "pair": {
+                          "default": "public",
+                          "title": "Pair",
+                          "type": "string"
+                        },
+                        "focus": {
+                          "default": "overview",
+                          "title": "Focus",
+                          "type": "string"
+                        }
+                      },
+                      "title": "summarize_pairParams",
+                      "type": "object"
+                    },
+                    "response_json_schema": {
+                      "type": "string"
+                    }
+                  }
+                ]
+              }
+            ],
+            "sub_agents": []
+          }
+        },
+        "turns": [
+          {
+            "turn_index": 0,
+            "turn_id": "turn_0",
+            "events": [
+              {
+                "author": "root_agent",
+                "content": {
+                  "parts": [
+                    {
+                      "function_call": {
+                        "id": "call_1057969",
+                        "args": {
+                          "pair": "public",
+                          "focus": "comparison"
+                        },
+                        "name": "summarize_pair"
+                      }
+                    }
+                  ],
+                  "role": "model"
+                },
+                "event_time": "2026-08-30T09:22:50.453617Z"
+              },
+              {
+                "author": "root_agent",
+                "content": {
+                  "parts": [
+                    {
+                      "function_response": {
+                        "id": "call_1057969",
+                        "name": "summarize_pair",
+                        "response": {
+                          "result": "Before and after comparison evidence for pair=public.\nComparison rows: [{\"incident_id\":\"inc-001\",\"moved_toward_operator\":true,\"operator_action\":\"shift_traffic\",\"operator_severity\":\"sev0\",\"original_severity\":\"sev1\",\"original_top_action\":\"shift_traffic\",\"redecided_severity\":\"sev0\",\"redecided_top_action\":\"shift_traffic\"},{\"incident_id\":\"inc-002\",\"moved_toward_operator\":true,\"operator_action\":\"roll_back_recent_deploy\",\"operator_severity\":\"sev2\",\"original_severity\":\"sev2\",\"original_top_action\":\"roll_back_recent_deploy\",\"redecided_severity\":\"sev2\",\"redecided_top_action\":\"roll_back_recent_deploy\"},{\"incident_id\":\"inc-003\",\"moved_toward_operator\":true,\"operator_action\":\"pause_retries\",\"operator_severity\":\"sev1\",\"original_severity\":\"sev1\",\"original_top_action\":\"pause_retries\",\"redecided_severity\":\"sev1\",\"redecided_top_action\":\"pause_retries\"},{\"incident_id\":\"inc-004\",\"moved_toward_operator\":true,\"operator_action\":\"roll_back_model\",\"operator_severity\":\"sev1\",\"original_severity\":\"sev1\",\"original_top_action\":\"roll_back_model\",\"redecided_severity\":\"sev1\",\"redecided_top_action\":\"roll_back_model\"},{\"incident_id\":\"inc-005\",\"moved_toward_operator\":true,\"operator_action\":\"cap_token_budget\",\"operator_severity\":\"sev3\",\"original_severity\":\"sev3\",\"original_top_action\":\"cap_token_budget\",\"redecided_severity\":\"sev3\",\"redecided_top_action\":\"cap_token_budget\"},{\"incident_id\":\"inc-006\",\"moved_toward_operator\":true,\"operator_action\":\"throttle_non_critical_consumers\",\"operator_severity\":\"sev2\",\"original_severity\":\"sev2\",\"original_top_action\":\"throttle_non_critical_consumers\",\"redecided_severity\":\"sev2\",\"redecided_top_action\":\"throttle_non_critical_consumers\"}].\nAgreement delta count and rate values: {\"action_after_matches\":6,\"action_before_matches\":6,\"action_count_delta\":0,\"action_rate_after\":1.0,\"action_rate_before\":1.0,\"action_rate_delta\":0.0,\"n_labeled\":6,\"severity_after_matches\":6,\"severity_before_matches\":5,\"severity_count_delta\":1,\"severity_rate_after\":1.0,\"severity_rate_before\":0.8333333333333334,\"severity_rate_delta\":0.16666666666666663}."
+                        }
+                      }
+                    }
+                  ],
+                  "role": "user"
+                },
+                "event_time": "2026-08-30T09:22:53.074156Z"
+              },
+              {
+                "author": "root_agent",
+                "content": {
+                  "parts": [
+                    {
+                      "text": "This is the before-and-after comparison for pair public. \n\nFor incident inc-001, the original severity was sev1 with recommended top action shift_traffic, the operator feedback specified severity sev0 and action shift_traffic, and the re-decided severity became sev0 with recommended top action shift_traffic, which moved toward operator feedback. \n\nFor incident inc-002, the original severity was sev2 with recommended top action roll_back_recent_deploy, the operator feedback specified severity sev2 and action roll_back_recent_deploy, and the re-decided severity was sev2 with recommended top action roll_back_recent_deploy, which moved toward operator feedback. \n\nFor incident inc-003, the original severity was sev1 with recommended top action pause_retries, the operator feedback specified severity sev1 and action pause_retries, and the re-decided severity was sev1 with recommended top action pause_retries, which moved toward operator feedback. \n\nFor incident inc-004, the original severity was sev1 with recommended top action roll_back_model, the operator feedback specified severity sev1 and action roll_back_model, and the re-decided severity was sev1 with recommended top action roll_back_model, which moved toward operator feedback. \n\nFor incident inc-005, the original severity was sev3 with recommended top action cap_token_budget, the operator feedback specified severity sev3 and action cap_token_budget, and the re-decided severity was sev3 with recommended top action cap_token_budget, which moved toward operator feedback. \n\nFor incident inc-006, the original severity was sev2 with recommended top action throttle_non_critical_consumers, the operator feedback specified severity sev2 and action throttle_non_critical_consumers, and the re-decided severity was sev2 with recommended top action throttle_non_critical_consumers, which moved toward operator feedback. \n\nRegarding agreement-delta metrics across all 6 labeled incidents, the action before matches count was 6, the action after matches count was 6, the action count delta was 0, the action rate before was 1.0, the action rate after was 1.0, and the action rate delta was 0.0. The severity before matches count was 5, the severity after matches count was 6, the severity count delta was 1, the severity rate before was approximately 0.8333 (0.8333333333333334), the severity rate after was 1.0, and the severity rate delta was approximately 0.1667 (0.16666666666666663)."
+                    }
+                  ],
+                  "role": "model"
+                },
+                "event_time": "2026-08-30T09:22:53.079151Z"
+              }
+            ]
+          }
+        ]
+      },
+      "context": "Before and after comparison evidence for pair=public.\nComparison rows: [{\"incident_id\":\"inc-001\",\"moved_toward_operator\":true,\"operator_action\":\"shift_traffic\",\"operator_severity\":\"sev0\",\"original_severity\":\"sev1\",\"original_top_action\":\"shift_traffic\",\"redecided_severity\":\"sev0\",\"redecided_top_action\":\"shift_traffic\"},{\"incident_id\":\"inc-002\",\"moved_toward_operator\":true,\"operator_action\":\"roll_back_recent_deploy\",\"operator_severity\":\"sev2\",\"original_severity\":\"sev2\",\"original_top_action\":\"roll_back_recent_deploy\",\"redecided_severity\":\"sev2\",\"redecided_top_action\":\"roll_back_recent_deploy\"},{\"incident_id\":\"inc-003\",\"moved_toward_operator\":true,\"operator_action\":\"pause_retries\",\"operator_severity\":\"sev1\",\"original_severity\":\"sev1\",\"original_top_action\":\"pause_retries\",\"redecided_severity\":\"sev1\",\"redecided_top_action\":\"pause_retries\"},{\"incident_id\":\"inc-004\",\"moved_toward_operator\":true,\"operator_action\":\"roll_back_model\",\"operator_severity\":\"sev1\",\"original_severity\":\"sev1\",\"original_top_action\":\"roll_back_model\",\"redecided_severity\":\"sev1\",\"redecided_top_action\":\"roll_back_model\"},{\"incident_id\":\"inc-005\",\"moved_toward_operator\":true,\"operator_action\":\"cap_token_budget\",\"operator_severity\":\"sev3\",\"original_severity\":\"sev3\",\"original_top_action\":\"cap_token_budget\",\"redecided_severity\":\"sev3\",\"redecided_top_action\":\"cap_token_budget\"},{\"incident_id\":\"inc-006\",\"moved_toward_operator\":true,\"operator_action\":\"throttle_non_critical_consumers\",\"operator_severity\":\"sev2\",\"original_severity\":\"sev2\",\"original_top_action\":\"throttle_non_critical_consumers\",\"redecided_severity\":\"sev2\",\"redecided_top_action\":\"throttle_non_critical_consumers\"}].\nAgreement delta count and rate values: {\"action_after_matches\":6,\"action_before_matches\":6,\"action_count_delta\":0,\"action_rate_after\":1.0,\"action_rate_before\":1.0,\"action_rate_delta\":0.0,\"n_labeled\":6,\"severity_after_matches\":6,\"severity_before_matches\":5,\"severity_count_delta\":1,\"severity_rate_after\":1.0,\"severity_rate_before\":0.8333333333333334,\"severity_rate_delta\":0.16666666666666663}."
+    },
+    {
+      "prompt": {
+        "parts": [
+          {
+            "text": "Use summarize_pair with pair=public and focus=analytics. Write only full sentences, not bullets or tables. Summarize analytics for pair public. State incident and alert counts, average grouping confidence, severity and blast-radius distributions, human-review count, action safety counts, operator correction count, agreement delta, and most involved services."
+          }
+        ],
+        "role": "user"
+      },
+      "responses": [
+        {
+          "response": {
+            "parts": [
+              {
+                "text": "For the public pair, the analytics reflect a total of 6 incidents and 8 alerts, with an average grouping confidence of 0.9217. \n\nThe severity distribution comprises 3 sev1 incidents, 2 sev2 incidents, and 1 sev3 incident. The blast-radius distribution includes 3 regional incidents, 1 global incident, 1 multi-service incident, and 1 single-service incident. \n\nThere are 0 human-review flags recorded. Proposed actions by safety level account for 4 actions categorized as needs approval and 3 actions categorized as safe. There is 1 operator correction recorded. \n\nIn terms of agreement delta across 6 labeled cases, severity agreement improved by a rate delta of approximately 0.1667 from 0.8333 to 1.0 with a count delta of 1 match, while action agreement remained unchanged with a rate delta of 0.0 and a consistent agreement rate of 1.0 across all 6 cases. \n\nThe most involved services are market-data-stream with 2 incidents, followed by auth-session, payments-ledger, risk-engine, and internal-dev-agent with 1 incident each."
+              }
+            ],
+            "role": "model"
+          }
+        }
+      ],
+      "eval_case_id": "public_analytics",
+      "agent_data": {
+        "agents": {
+          "root_agent": {
+            "agent_id": "root_agent",
+            "agent_type": "LlmAgent",
+            "description": "",
+            "instruction": "You are an incident-command assistant. For incident questions, call summarize_pair with the pair name (default public) and the pipeline focus requested by the user. Use focus=overview only when no specific stage is requested. Ground your answer only in that tool output and follow the requested response format. Never claim that actions were executed — recommendations only. Do not treat trade-execution dependency failures, payments reconciliation backlog, or rollout-related risk-engine drift as low importance without strong justification from the tool output.",
+            "tools": [
+              {
+                "function_declarations": [
+                  {
+                    "description": "Summarize incident command artifacts for a pair folder.\n\nArgs:\n    pair: Name of the folder under pipeline_files/ (also the session id).\n    focus: Pipeline area to summarize. Use overview unless the user asks\n        about a specific stage.\n\nReturns:\n    Grounding evidence for the requested pipeline area.",
+                    "name": "summarize_pair",
+                    "parameters_json_schema": {
+                      "properties": {
+                        "pair": {
+                          "default": "public",
+                          "title": "Pair",
+                          "type": "string"
+                        },
+                        "focus": {
+                          "default": "overview",
+                          "title": "Focus",
+                          "type": "string"
+                        }
+                      },
+                      "title": "summarize_pairParams",
+                      "type": "object"
+                    },
+                    "response_json_schema": {
+                      "type": "string"
+                    }
+                  }
+                ]
+              }
+            ],
+            "sub_agents": []
+          }
+        },
+        "turns": [
+          {
+            "turn_index": 0,
+            "turn_id": "turn_0",
+            "events": [
+              {
+                "author": "root_agent",
+                "content": {
+                  "parts": [
+                    {
+                      "function_call": {
+                        "id": "call_405725",
+                        "args": {
+                          "pair": "public",
+                          "focus": "analytics"
+                        },
+                        "name": "summarize_pair"
+                      }
+                    }
+                  ],
+                  "role": "model"
+                },
+                "event_time": "2026-08-30T09:23:01.345388Z"
+              },
+              {
+                "author": "root_agent",
+                "content": {
+                  "parts": [
+                    {
+                      "function_response": {
+                        "id": "call_405725",
+                        "name": "summarize_pair",
+                        "response": {
+                          "result": "Analytics evidence for pair=public.\nAnalytics summary: {\"agreement_delta\":{\"action_after_matches\":6,\"action_before_matches\":6,\"action_count_delta\":0,\"action_rate_after\":1.0,\"action_rate_before\":1.0,\"action_rate_delta\":0.0,\"n_labeled\":6,\"severity_after_matches\":6,\"severity_before_matches\":5,\"severity_count_delta\":1,\"severity_rate_after\":1.0,\"severity_rate_before\":0.8333333333333334,\"severity_rate_delta\":0.16666666666666663},\"alert_count\":8,\"average_grouping_confidence\":0.9217,\"blast_radius_distribution\":{\"global\":1,\"multi_service\":1,\"regional\":3,\"single_service\":1},\"human_review_flag_count\":0,\"incident_count\":6,\"operator_correction_count\":1,\"proposed_actions_by_safety_level\":{\"needs_approval\":4,\"safe\":3},\"services_most_involved\":[{\"incident_count\":2,\"service\":\"market-data-stream\"},{\"incident_count\":1,\"service\":\"auth-session\"},{\"incident_count\":1,\"service\":\"payments-ledger\"},{\"incident_count\":1,\"service\":\"risk-engine\"},{\"incident_count\":1,\"service\":\"internal-dev-agent\"}],\"severity_distribution\":{\"sev1\":3,\"sev2\":2,\"sev3\":1}}."
+                        }
+                      }
+                    }
+                  ],
+                  "role": "user"
+                },
+                "event_time": "2026-08-30T09:23:04.369075Z"
+              },
+              {
+                "author": "root_agent",
+                "content": {
+                  "parts": [
+                    {
+                      "text": "For the public pair, the analytics reflect a total of 6 incidents and 8 alerts, with an average grouping confidence of 0.9217. \n\nThe severity distribution comprises 3 sev1 incidents, 2 sev2 incidents, and 1 sev3 incident. The blast-radius distribution includes 3 regional incidents, 1 global incident, 1 multi-service incident, and 1 single-service incident. \n\nThere are 0 human-review flags recorded. Proposed actions by safety level account for 4 actions categorized as needs approval and 3 actions categorized as safe. There is 1 operator correction recorded. \n\nIn terms of agreement delta across 6 labeled cases, severity agreement improved by a rate delta of approximately 0.1667 from 0.8333 to 1.0 with a count delta of 1 match, while action agreement remained unchanged with a rate delta of 0.0 and a consistent agreement rate of 1.0 across all 6 cases. \n\nThe most involved services are market-data-stream with 2 incidents, followed by auth-session, payments-ledger, risk-engine, and internal-dev-agent with 1 incident each."
+                    }
+                  ],
+                  "role": "model"
+                },
+                "event_time": "2026-08-30T09:23:04.371336Z"
+              }
+            ]
+          }
+        ]
+      },
+      "context": "Analytics evidence for pair=public.\nAnalytics summary: {\"agreement_delta\":{\"action_after_matches\":6,\"action_before_matches\":6,\"action_count_delta\":0,\"action_rate_after\":1.0,\"action_rate_before\":1.0,\"action_rate_delta\":0.0,\"n_labeled\":6,\"severity_after_matches\":6,\"severity_before_matches\":5,\"severity_count_delta\":1,\"severity_rate_after\":1.0,\"severity_rate_before\":0.8333333333333334,\"severity_rate_delta\":0.16666666666666663},\"alert_count\":8,\"average_grouping_confidence\":0.9217,\"blast_radius_distribution\":{\"global\":1,\"multi_service\":1,\"regional\":3,\"single_service\":1},\"human_review_flag_count\":0,\"incident_count\":6,\"operator_correction_count\":1,\"proposed_actions_by_safety_level\":{\"needs_approval\":4,\"safe\":3},\"services_most_involved\":[{\"incident_count\":2,\"service\":\"market-data-stream\"},{\"incident_count\":1,\"service\":\"auth-session\"},{\"incident_count\":1,\"service\":\"payments-ledger\"},{\"incident_count\":1,\"service\":\"risk-engine\"},{\"incident_count\":1,\"service\":\"internal-dev-agent\"}],\"severity_distribution\":{\"sev1\":3,\"sev2\":2,\"sev3\":1}}."
+    },
+    {
+      "prompt": {
+        "parts": [
+          {
+            "text": "Use summarize_pair with pair=public and focus=prior_feedback. Write only full sentences, not bullets or tables. Explain prior-feedback-store status for pair public. State whether prior feedback was loaded, its count, and the recorded session id."
+          }
+        ],
+        "role": "user"
+      },
+      "responses": [
+        {
+          "response": {
+            "parts": [
+              {
+                "text": "For the pair public, the prior feedback was successfully loaded into the feedback store. The store recorded a prior feedback count of 30 items. The recorded session ID associated with this store status is public."
+              }
+            ],
+            "role": "model"
+          }
+        }
+      ],
+      "eval_case_id": "public_prior_feedback",
+      "agent_data": {
+        "agents": {
+          "root_agent": {
+            "agent_id": "root_agent",
+            "agent_type": "LlmAgent",
+            "description": "",
+            "instruction": "You are an incident-command assistant. For incident questions, call summarize_pair with the pair name (default public) and the pipeline focus requested by the user. Use focus=overview only when no specific stage is requested. Ground your answer only in that tool output and follow the requested response format. Never claim that actions were executed — recommendations only. Do not treat trade-execution dependency failures, payments reconciliation backlog, or rollout-related risk-engine drift as low importance without strong justification from the tool output.",
+            "tools": [
+              {
+                "function_declarations": [
+                  {
+                    "description": "Summarize incident command artifacts for a pair folder.\n\nArgs:\n    pair: Name of the folder under pipeline_files/ (also the session id).\n    focus: Pipeline area to summarize. Use overview unless the user asks\n        about a specific stage.\n\nReturns:\n    Grounding evidence for the requested pipeline area.",
+                    "name": "summarize_pair",
+                    "parameters_json_schema": {
+                      "properties": {
+                        "pair": {
+                          "default": "public",
+                          "title": "Pair",
+                          "type": "string"
+                        },
+                        "focus": {
+                          "default": "overview",
+                          "title": "Focus",
+                          "type": "string"
+                        }
+                      },
+                      "title": "summarize_pairParams",
+                      "type": "object"
+                    },
+                    "response_json_schema": {
+                      "type": "string"
+                    }
+                  }
+                ]
+              }
+            ],
+            "sub_agents": []
+          }
+        },
+        "turns": [
+          {
+            "turn_index": 0,
+            "turn_id": "turn_0",
+            "events": [
+              {
+                "author": "root_agent",
+                "content": {
+                  "parts": [
+                    {
+                      "function_call": {
+                        "id": "call_773566",
+                        "args": {
+                          "focus": "prior_feedback",
+                          "pair": "public"
+                        },
+                        "name": "summarize_pair"
+                      }
+                    }
+                  ],
+                  "role": "model"
+                },
+                "event_time": "2026-08-30T09:23:12.875770Z"
+              },
+              {
+                "author": "root_agent",
+                "content": {
+                  "parts": [
+                    {
+                      "function_response": {
+                        "id": "call_773566",
+                        "name": "summarize_pair",
+                        "response": {
+                          "result": "Prior feedback store evidence for pair=public.\nFeedback store status: {\"pair\":\"public\",\"prior_feedback_count\":30,\"prior_feedback_loaded\":true,\"session_id\":\"public\"}."
+                        }
+                      }
+                    }
+                  ],
+                  "role": "user"
+                },
+                "event_time": "2026-08-30T09:23:15.226303Z"
+              },
+              {
+                "author": "root_agent",
+                "content": {
+                  "parts": [
+                    {
+                      "text": "For the pair public, the prior feedback was successfully loaded into the feedback store. The store recorded a prior feedback count of 30 items. The recorded session ID associated with this store status is public."
+                    }
+                  ],
+                  "role": "model"
+                },
+                "event_time": "2026-08-30T09:23:15.227932Z"
+              }
+            ]
+          }
+        ]
+      },
+      "context": "Prior feedback store evidence for pair=public.\nFeedback store status: {\"pair\":\"public\",\"prior_feedback_count\":30,\"prior_feedback_loaded\":true,\"session_id\":\"public\"}."
+    },
+    {
+      "prompt": {
+        "parts": [
+          {
+            "text": "Use summarize_pair with pair=public and focus=escalation. Write only full sentences, not bullets or tables. Summarize sev0/sev1 escalation bundles for pair public. For every bundle state incident id, owner team, page flag, suggested channel, and quote the summary exactly."
+          }
+        ],
+        "role": "user"
+      },
+      "responses": [
+        {
+          "response": {
+            "parts": [
+              {
+                "text": "For incident inc-001, the recommended owner team is Core Trading, the page flag is true, the suggested channel is #incident-core-trading, and the exact summary is \"[sev0] Market Data Degradation Causing Trade Execution Timeouts in eu-west-1: Elevated latency and publish failures on market-data-stream in eu-west-1 causing cascading quote fetch timeouts on downstream trade-execution service.\"\n\nFor incident inc-003, the recommended owner team is Payments Platform, the page flag is true, the suggested channel is #incident-payments-platform, and the exact summary is \"[sev1] Withdrawal Reconciliation Queue Depth Spike on payments-ledger: Reconciliation queue depth exceeded 18,000 due to settlement callback delays from external provider and rising processor retries.\"\n\nFor incident inc-004, the recommended owner team is Risk & Compliance, the page flag is true, the suggested channel is #incident-risk-and-compliance, and the exact summary is \"[sev1] Decision Distribution Drift on risk-engine Post-Model Rollout: Risk evaluation decision distribution shifted 23% from baseline following model rollout with emerging false-positive complaints.\""
+              }
+            ],
+            "role": "model"
+          }
+        }
+      ],
+      "eval_case_id": "public_escalation",
+      "agent_data": {
+        "agents": {
+          "root_agent": {
+            "agent_id": "root_agent",
+            "agent_type": "LlmAgent",
+            "description": "",
+            "instruction": "You are an incident-command assistant. For incident questions, call summarize_pair with the pair name (default public) and the pipeline focus requested by the user. Use focus=overview only when no specific stage is requested. Ground your answer only in that tool output and follow the requested response format. Never claim that actions were executed — recommendations only. Do not treat trade-execution dependency failures, payments reconciliation backlog, or rollout-related risk-engine drift as low importance without strong justification from the tool output.",
+            "tools": [
+              {
+                "function_declarations": [
+                  {
+                    "description": "Summarize incident command artifacts for a pair folder.\n\nArgs:\n    pair: Name of the folder under pipeline_files/ (also the session id).\n    focus: Pipeline area to summarize. Use overview unless the user asks\n        about a specific stage.\n\nReturns:\n    Grounding evidence for the requested pipeline area.",
+                    "name": "summarize_pair",
+                    "parameters_json_schema": {
+                      "properties": {
+                        "pair": {
+                          "default": "public",
+                          "title": "Pair",
+                          "type": "string"
+                        },
+                        "focus": {
+                          "default": "overview",
+                          "title": "Focus",
+                          "type": "string"
+                        }
+                      },
+                      "title": "summarize_pairParams",
+                      "type": "object"
+                    },
+                    "response_json_schema": {
+                      "type": "string"
+                    }
+                  }
+                ]
+              }
+            ],
+            "sub_agents": []
+          }
+        },
+        "turns": [
+          {
+            "turn_index": 0,
+            "turn_id": "turn_0",
+            "events": [
+              {
+                "author": "root_agent",
+                "content": {
+                  "parts": [
+                    {
+                      "function_call": {
+                        "id": "call_670596",
+                        "args": {
+                          "focus": "escalation",
+                          "pair": "public"
+                        },
+                        "name": "summarize_pair"
+                      }
+                    }
+                  ],
+                  "role": "model"
+                },
+                "event_time": "2026-08-30T09:23:17.720455Z"
+              },
+              {
+                "author": "root_agent",
+                "content": {
+                  "parts": [
+                    {
+                      "function_response": {
+                        "id": "call_670596",
+                        "name": "summarize_pair",
+                        "response": {
+                          "result": "Escalation evidence for pair=public.\nEscalation bundle rows: [{\"incident_id\":\"inc-001\",\"owner_team\":\"Core Trading\",\"page\":true,\"suggested_channel\":\"#incident-core-trading\",\"summary\":\"[sev0] Market Data Degradation Causing Trade Execution Timeouts in eu-west-1: Elevated latency and publish failures on market-data-stream in eu-west-1 causing cascading quote fetch timeouts on downstream trade-execution service.\"},{\"incident_id\":\"inc-003\",\"owner_team\":\"Payments Platform\",\"page\":true,\"suggested_channel\":\"#incident-payments-platform\",\"summary\":\"[sev1] Withdrawal Reconciliation Queue Depth Spike on payments-ledger: Reconciliation queue depth exceeded 18,000 due to settlement callback delays from external provider and rising processor retries.\"},{\"incident_id\":\"inc-004\",\"owner_team\":\"Risk & Compliance\",\"page\":true,\"suggested_channel\":\"#incident-risk-and-compliance\",\"summary\":\"[sev1] Decision Distribution Drift on risk-engine Post-Model Rollout: Risk evaluation decision distribution shifted 23% from baseline following model rollout with emerging false-positive complaints.\"}]."
+                        }
+                      }
+                    }
+                  ],
+                  "role": "user"
+                },
+                "event_time": "2026-08-30T09:23:20.266450Z"
+              },
+              {
+                "author": "root_agent",
+                "content": {
+                  "parts": [
+                    {
+                      "text": "For incident inc-001, the recommended owner team is Core Trading, the page flag is true, the suggested channel is #incident-core-trading, and the exact summary is \"[sev0] Market Data Degradation Causing Trade Execution Timeouts in eu-west-1: Elevated latency and publish failures on market-data-stream in eu-west-1 causing cascading quote fetch timeouts on downstream trade-execution service.\"\n\nFor incident inc-003, the recommended owner team is Payments Platform, the page flag is true, the suggested channel is #incident-payments-platform, and the exact summary is \"[sev1] Withdrawal Reconciliation Queue Depth Spike on payments-ledger: Reconciliation queue depth exceeded 18,000 due to settlement callback delays from external provider and rising processor retries.\"\n\nFor incident inc-004, the recommended owner team is Risk & Compliance, the page flag is true, the suggested channel is #incident-risk-and-compliance, and the exact summary is \"[sev1] Decision Distribution Drift on risk-engine Post-Model Rollout: Risk evaluation decision distribution shifted 23% from baseline following model rollout with emerging false-positive complaints.\""
+                    }
+                  ],
+                  "role": "model"
+                },
+                "event_time": "2026-08-30T09:23:20.269269Z"
+              }
+            ]
+          }
+        ]
+      },
+      "context": "Escalation evidence for pair=public.\nEscalation bundle rows: [{\"incident_id\":\"inc-001\",\"owner_team\":\"Core Trading\",\"page\":true,\"suggested_channel\":\"#incident-core-trading\",\"summary\":\"[sev0] Market Data Degradation Causing Trade Execution Timeouts in eu-west-1: Elevated latency and publish failures on market-data-stream in eu-west-1 causing cascading quote fetch timeouts on downstream trade-execution service.\"},{\"incident_id\":\"inc-003\",\"owner_team\":\"Payments Platform\",\"page\":true,\"suggested_channel\":\"#incident-payments-platform\",\"summary\":\"[sev1] Withdrawal Reconciliation Queue Depth Spike on payments-ledger: Reconciliation queue depth exceeded 18,000 due to settlement callback delays from external provider and rising processor retries.\"},{\"incident_id\":\"inc-004\",\"owner_team\":\"Risk & Compliance\",\"page\":true,\"suggested_channel\":\"#incident-risk-and-compliance\",\"summary\":\"[sev1] Decision Distribution Drift on risk-engine Post-Model Rollout: Risk evaluation decision distribution shifted 23% from baseline following model rollout with emerging false-positive complaints.\"}]."
+    },
+    {
+      "prompt": {
+        "parts": [
+          {
+            "text": "Use summarize_pair with pair=public and focus=llm_audit. Write only full sentences, not bullets or tables. Summarize LLM-call auditability for pair public. State total calls, counts by stage, whether each incident has an action and drafting call, whether re-decision calls include feedback, and whether every record contains the required audit fields."
+          }
+        ],
+        "role": "user"
+      },
+      "responses": [
+        {
+          "response": {
+            "parts": [
+              {
+                "text": "The LLM audit log for pair public contains a total of 44 calls across 44 complete records. \n\nBy pipeline stage, the call counts consist of 12 action proposal calls, 12 action re-decision calls, 2 incident grouping calls, 2 incident grouping re-decision calls, 2 severity assessment calls, 2 severity re-decision calls, and 12 stakeholder drafting calls. \n\nEach incident has complete coverage with both an action recommendation call and a stakeholder drafting call. \n\nAll re-decision calls include few-shot feedback. \n\nEvery logged record contains all required audit fields, specifically stage, incident ID, timestamp, provider, model, prompt hash, input artifacts, output artifact, and the few-shot flag."
+              }
+            ],
+            "role": "model"
+          }
+        }
+      ],
+      "eval_case_id": "public_llm_audit",
+      "agent_data": {
+        "agents": {
+          "root_agent": {
+            "agent_id": "root_agent",
+            "agent_type": "LlmAgent",
+            "description": "",
+            "instruction": "You are an incident-command assistant. For incident questions, call summarize_pair with the pair name (default public) and the pipeline focus requested by the user. Use focus=overview only when no specific stage is requested. Ground your answer only in that tool output and follow the requested response format. Never claim that actions were executed — recommendations only. Do not treat trade-execution dependency failures, payments reconciliation backlog, or rollout-related risk-engine drift as low importance without strong justification from the tool output.",
+            "tools": [
+              {
+                "function_declarations": [
+                  {
+                    "description": "Summarize incident command artifacts for a pair folder.\n\nArgs:\n    pair: Name of the folder under pipeline_files/ (also the session id).\n    focus: Pipeline area to summarize. Use overview unless the user asks\n        about a specific stage.\n\nReturns:\n    Grounding evidence for the requested pipeline area.",
+                    "name": "summarize_pair",
+                    "parameters_json_schema": {
+                      "properties": {
+                        "pair": {
+                          "default": "public",
+                          "title": "Pair",
+                          "type": "string"
+                        },
+                        "focus": {
+                          "default": "overview",
+                          "title": "Focus",
+                          "type": "string"
+                        }
+                      },
+                      "title": "summarize_pairParams",
+                      "type": "object"
+                    },
+                    "response_json_schema": {
+                      "type": "string"
+                    }
+                  }
+                ]
+              }
+            ],
+            "sub_agents": []
+          }
+        },
+        "turns": [
+          {
+            "turn_index": 0,
+            "turn_id": "turn_0",
+            "events": [
+              {
+                "author": "root_agent",
+                "content": {
+                  "parts": [
+                    {
+                      "function_call": {
+                        "id": "call_829338",
+                        "args": {
+                          "pair": "public",
+                          "focus": "llm_audit"
+                        },
+                        "name": "summarize_pair"
+                      }
+                    }
+                  ],
+                  "role": "model"
+                },
+                "event_time": "2026-08-30T09:23:24.560707Z"
+              },
+              {
+                "author": "root_agent",
+                "content": {
+                  "parts": [
+                    {
+                      "function_response": {
+                        "id": "call_829338",
+                        "name": "summarize_pair",
+                        "response": {
+                          "result": "LLM audit evidence for pair=public.\nThe audit log contains 44 calls and 44 complete records.\nCall counts by stage: {\"action_proposal\":12,\"action_redecision\":12,\"incident_grouping\":2,\"incident_grouping_redecision\":2,\"severity_assessment\":2,\"severity_redecision\":2,\"stakeholder_drafting\":12}.\nPer-incident action-call coverage is complete=True; per-incident drafting-call coverage is complete=True.\nAll re-decision calls include few-shot feedback=True.\nEvery logged call records stage, incident id, timestamp, provider, model, prompt hash, input artifacts, output artifact, and the few-shot flag."
+                        }
+                      }
+                    }
+                  ],
+                  "role": "user"
+                },
+                "event_time": "2026-08-30T09:23:27.629423Z"
+              },
+              {
+                "author": "root_agent",
+                "content": {
+                  "parts": [
+                    {
+                      "text": "The LLM audit log for pair public contains a total of 44 calls across 44 complete records. \n\nBy pipeline stage, the call counts consist of 12 action proposal calls, 12 action re-decision calls, 2 incident grouping calls, 2 incident grouping re-decision calls, 2 severity assessment calls, 2 severity re-decision calls, and 12 stakeholder drafting calls. \n\nEach incident has complete coverage with both an action recommendation call and a stakeholder drafting call. \n\nAll re-decision calls include few-shot feedback. \n\nEvery logged record contains all required audit fields, specifically stage, incident ID, timestamp, provider, model, prompt hash, input artifacts, output artifact, and the few-shot flag."
+                    }
+                  ],
+                  "role": "model"
+                },
+                "event_time": "2026-08-30T09:23:27.631807Z"
+              }
+            ]
+          }
+        ]
+      },
+      "context": "LLM audit evidence for pair=public.\nThe audit log contains 44 calls and 44 complete records.\nCall counts by stage: {\"action_proposal\":12,\"action_redecision\":12,\"incident_grouping\":2,\"incident_grouping_redecision\":2,\"severity_assessment\":2,\"severity_redecision\":2,\"stakeholder_drafting\":12}.\nPer-incident action-call coverage is complete=True; per-incident drafting-call coverage is complete=True.\nAll re-decision calls include few-shot feedback=True.\nEvery logged call records stage, incident id, timestamp, provider, model, prompt hash, input artifacts, output artifact, and the few-shot flag."
+    }
+  ]
+}

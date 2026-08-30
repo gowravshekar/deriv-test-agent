@@ -1,0 +1,50 @@
+[
+  {
+    "incident_id": "inc-001",
+    "severity": "sev1",
+    "status": "open",
+    "business_impact": "Trading experience degraded; order delays possible",
+    "technical_impact": "Quote path and execution timeouts",
+    "reasoning": "Trade execution depends on market data; multi-service impact"
+  },
+  {
+    "incident_id": "inc-002",
+    "severity": "sev2",
+    "status": "open",
+    "business_impact": "Possible login friction",
+    "technical_impact": "CPU after deploy",
+    "reasoning": "Rollout-correlated but traffic normal"
+  },
+  {
+    "incident_id": "inc-003",
+    "severity": "sev1",
+    "status": "open",
+    "business_impact": "Withdrawals delayed",
+    "technical_impact": "Reconciliation backlog",
+    "reasoning": "Financial correctness at risk if rushed"
+  },
+  {
+    "incident_id": "inc-004",
+    "severity": "sev1",
+    "status": "open",
+    "business_impact": "Risk decisions may be wrong",
+    "technical_impact": "Model drift after rollout",
+    "reasoning": "Compliance exposure; rollback preferred"
+  },
+  {
+    "incident_id": "inc-005",
+    "severity": "sev3",
+    "status": "open",
+    "business_impact": "Internal cost only",
+    "technical_impact": "LLM spend",
+    "reasoning": "No customer trading impact"
+  },
+  {
+    "incident_id": "inc-006",
+    "severity": "sev2",
+    "status": "monitoring",
+    "business_impact": "Limited regional latency",
+    "technical_impact": "Isolated us-east-1",
+    "reasoning": "No packet loss; monitor"
+  }
+]

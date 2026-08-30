@@ -1,0 +1,62 @@
+[
+  {
+    "incident_id": "inc-001",
+    "action": "shift_traffic",
+    "model_safety_level": "safe",
+    "final_safety_level": "safe",
+    "guardrail_reasons": []
+  },
+  {
+    "incident_id": "inc-001",
+    "action": "throttle_non_critical_consumers",
+    "model_safety_level": "safe",
+    "final_safety_level": "safe",
+    "guardrail_reasons": []
+  },
+  {
+    "incident_id": "inc-002",
+    "action": "roll_back_recent_deploy",
+    "model_safety_level": "safe",
+    "final_safety_level": "safe",
+    "guardrail_reasons": []
+  },
+  {
+    "incident_id": "inc-003",
+    "action": "pause_retries",
+    "model_safety_level": "needs_approval",
+    "final_safety_level": "needs_approval",
+    "guardrail_reasons": [
+      "change freeze on critical dependency path"
+    ]
+  },
+  {
+    "incident_id": "inc-003",
+    "action": "scale_workers",
+    "model_safety_level": "needs_approval",
+    "final_safety_level": "needs_approval",
+    "guardrail_reasons": [
+      "change freeze on critical dependency path"
+    ]
+  },
+  {
+    "incident_id": "inc-004",
+    "action": "roll_back_model",
+    "model_safety_level": "safe",
+    "final_safety_level": "safe",
+    "guardrail_reasons": []
+  },
+  {
+    "incident_id": "inc-005",
+    "action": "cap_token_budget",
+    "model_safety_level": "safe",
+    "final_safety_level": "safe",
+    "guardrail_reasons": []
+  },
+  {
+    "incident_id": "inc-006",
+    "action": "throttle_non_critical_consumers",
+    "model_safety_level": "safe",
+    "final_safety_level": "safe",
+    "guardrail_reasons": []
+  }
+]

@@ -1,0 +1,8 @@
+# Offline CI gate: local CodeExecutionMetric only, no Vertex/ADC needed.
+# Use for artifact contract checks when credentials are unavailable.
+metrics_to_run:
+  - pipeline_artifact_checks
+
+custom_metrics:
+  - name: pipeline_artifact_checks
+    custom_function_file: pipeline_artifact_checks.py

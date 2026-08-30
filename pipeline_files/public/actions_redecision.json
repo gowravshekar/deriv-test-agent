@@ -1,0 +1,50 @@
+[
+  {
+    "incident_id": "inc-001",
+    "action": "shift_traffic",
+    "why": "Isolate the degraded eu-west-1 market-data-stream instances by shifting regional traffic away to restore downstream quote fetching and order execution.",
+    "expected_effect": "Relieves load and packet retransmit issues in eu-west-1 while allowing healthy regions to handle trade execution traffic.",
+    "risk": "Potential increased latency or load spikes on destination regions.",
+    "safety_level": "needs_approval"
+  },
+  {
+    "incident_id": "inc-002",
+    "action": "restart_pods",
+    "why": "Clear transient initialization bottlenecks or stuck runtime processes on auth-session pods following deployment.",
+    "expected_effect": "CPU utilization returns to baseline operational levels across the service fleet.",
+    "risk": "Minor transient connection churn during rolling pod termination and startup.",
+    "safety_level": "safe"
+  },
+  {
+    "incident_id": "inc-003",
+    "action": "pause_retries",
+    "why": "Elevated retry storms due to external settlement provider latency are amplifying the reconciliation backlog.",
+    "expected_effect": "Halts cascading retry attempts, stabilizing queue depth and reducing load on the payments-ledger processing queue.",
+    "risk": "Withdrawal reconciliation processing will be temporarily delayed until retries are safely resumed.",
+    "safety_level": "needs_approval"
+  },
+  {
+    "incident_id": "inc-004",
+    "action": "roll_back_model",
+    "why": "The newly deployed model exhibits a 23% decision distribution drift causing high false-positive rejections on customer trades.",
+    "expected_effect": "Restores risk evaluation scoring to baseline distribution and stops erroneous rejections.",
+    "risk": "Brief transition period while reloading previous model weights in memory.",
+    "safety_level": "needs_approval"
+  },
+  {
+    "incident_id": "inc-005",
+    "action": "cap_token_budget",
+    "why": "Surge in autonomous code review workloads is consuming LLM tokens at 4.6x baseline due to uncapped loops.",
+    "expected_effect": "Instantly caps maximum token consumption to prevent runaway billing and cost inflation.",
+    "risk": "In-flight code review jobs exceeding the budget cap may fail or be truncated.",
+    "safety_level": "safe"
+  },
+  {
+    "incident_id": "inc-006",
+    "action": "throttle_non_critical_consumers",
+    "why": "Relieve localized processing load and consumer backpressure on us-east-1 market-data-stream nodes without impacting core trade execution.",
+    "expected_effect": "Reduces regional node load and brings p99 market data stream latency back within standard thresholds.",
+    "risk": "Non-critical downstream services such as reporting and analytics may experience temporary delays in receiving updates.",
+    "safety_level": "safe"
+  }
+]

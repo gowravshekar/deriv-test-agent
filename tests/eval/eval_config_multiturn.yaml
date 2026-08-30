@@ -1,6 +1,0 @@
-# Grade synthesized or hand-authored multi-turn traces only.
-# Single-turn built-ins 400 on traces with 2+ turns — do not mix configs.
-metrics_to_run:
-  - multi_turn_task_success
-  - multi_turn_trajectory_quality
-  - multi_turn_tool_use_quality

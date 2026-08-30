@@ -1,0 +1,50 @@
+[
+  {
+    "incident_id": "inc-001",
+    "severity": "sev0",
+    "status": "open",
+    "business_impact": "Active trading halt and order submission failures for users in eu-west-1, directly affecting transaction execution and market integrity.",
+    "technical_impact": "Packet retransmits and consumer lag in market-data-stream cascading into widespread quote fetch timeouts and order routing execution drops.",
+    "reasoning": "Severe multi-service disruption directly impacting critical trading execution pipelines in eu-west-1 with no safe degradation path."
+  },
+  {
+    "incident_id": "inc-002",
+    "severity": "sev2",
+    "status": "open",
+    "business_impact": "Potential latency or authentication delays for users in ap-south-1 if capacity degrades further.",
+    "technical_impact": "Sustained high CPU utilization exceeding 92% across auth-session pods following recent deployment.",
+    "reasoning": "Performance degradation correlated with a recent rollout on a high-tier identity service; currently contained but risks auth failures if unmitigated."
+  },
+  {
+    "incident_id": "inc-003",
+    "severity": "sev1",
+    "status": "open",
+    "business_impact": "Delays in user withdrawal processing and potential settlement discrepancies affecting financial reconciliation.",
+    "technical_impact": "Reconciliation backlog exceeding 18,000 items due to settlement provider latency and retry storms.",
+    "reasoning": "Critical payments infrastructure failure with global blast radius and financial correctness exposure requiring immediate remediation."
+  },
+  {
+    "incident_id": "inc-004",
+    "severity": "sev1",
+    "status": "open",
+    "business_impact": "Erroneous risk decisions and high false-positive rejections for legitimate customer trades following model deployment.",
+    "technical_impact": "A 23% statistical drift in risk scoring distribution indicating systematic model misclassification.",
+    "reasoning": "Rollout-correlated drift on critical risk-engine service directly impacting trade evaluation accuracy and platform compliance posture."
+  },
+  {
+    "incident_id": "inc-005",
+    "severity": "sev3",
+    "status": "open",
+    "business_impact": "Unplanned internal operational cost inflation with no direct customer or trading impact.",
+    "technical_impact": "Autonomous code review agents consuming 4.6x baseline LLM token volume due to uncapped loops.",
+    "reasoning": "Internal developer agent anomaly on medium-tier service without external customer exposure or data risk."
+  },
+  {
+    "incident_id": "inc-006",
+    "severity": "sev2",
+    "status": "monitoring",
+    "business_impact": "Localized tick latency increase in us-east-1 that may cause minor pricing delays without complete trade failure.",
+    "technical_impact": "p99 latency increase to 170ms on market-data-stream regional nodes without packet loss.",
+    "reasoning": "Single-region latency elevation on critical market data stream being monitored with no widespread cascading failures."
+  }
+]

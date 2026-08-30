@@ -4,11 +4,29 @@ This directory contains evaluation datasets for testing agent behavior.
 
 ## Running Evaluations
 
-### Default Dataset
+### Pipeline Dataset
+
+`pipeline-dataset.json` is generated, not hand-edited. Its `context` field holds
+the live `summarize_pair` output, which is what `grounding_v1` scores the answer
+against, so it must be refreshed whenever the input fixtures change.
+
+The generator creates 14 cases covering the final overview plus every pipeline
+contract: input loading and ordered lifecycle, grouping, severity, actions,
+safety guardrails, stakeholder drafting, operator review, feedback and
+re-decision, before/after comparison, analytics, prior feedback, escalation,
+and LLM-call auditability.
+
 ```bash
-# Run the agent over the default dataset and grade the traces
-agents-cli eval run
+# 1. Regenerate the dataset from current pipeline artifacts
+uv run python tests/eval/make_pipeline_dataset.py --pair public
+
+# 2. Run the agent over it and grade the traces
+agents-cli eval run --config tests/eval/eval_config_pipeline.yaml \
+  --dataset tests/eval/datasets/pipeline-dataset.json --concurrency 1
 ```
+
+Pass `--dataset` and `--config` explicitly; there is no scaffolded default
+dataset in this project.
 
 ### Custom Dataset
 ```bash
@@ -92,7 +110,7 @@ user message; `eval generate` appends the next agent response.
 
 You can create custom datasets in two ways:
 
-1. **By Hand**: Copy `basic-dataset.json` as a template and manually add evaluation cases.
+1. **By Hand**: Copy `pipeline-dataset.json` as a template and manually add evaluation cases.
 2. **Synthesize**: Use the synthetic dataset generation command to generate conversation scenarios:
    ```bash
    agents-cli eval dataset synthesize --count 10

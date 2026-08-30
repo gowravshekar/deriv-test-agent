@@ -1,0 +1,653 @@
+{
+  "pair": "public",
+  "session_id": "public",
+  "stages": [
+    "INIT",
+    "INPUTS_LOADED",
+    "PRIOR_FEEDBACK_LOADED",
+    "INCIDENT_GROUPING_COMPLETE",
+    "SEVERITY_ASSESSMENT_COMPLETE",
+    "ACTION_PROPOSALS_COMPLETE",
+    "SAFETY_GUARDRAILS_COMPLETE",
+    "STAKEHOLDER_DRAFTING_COMPLETE",
+    "OPERATOR_REVIEW_COLLECTED",
+    "FEEDBACK_EXAMPLES_BUILT",
+    "REDECISION_COMPLETE",
+    "BEFORE_AFTER_COMPARISON_COMPLETE",
+    "ANALYTICS_GENERATED",
+    "VALIDATION_COMPLETE",
+    "RESULTS_FINALISED"
+  ],
+  "incidents": [
+    {
+      "incident_id": "inc-001",
+      "title": "Market data latency impacting trade execution",
+      "summary": "EU market-data latency and errors cascading to trade timeouts.",
+      "alert_ids": [
+        "a-101",
+        "a-102",
+        "a-103"
+      ],
+      "primary_service": "market-data-stream",
+      "suspected_cause": "Consumer lag and fanout failures",
+      "blast_radius": "multi_service",
+      "confidence": 0.88,
+      "needs_human_review": false
+    },
+    {
+      "incident_id": "inc-002",
+      "title": "Auth session CPU after deploy",
+      "summary": "CPU spike after recent auth deploy with normal login traffic.",
+      "alert_ids": [
+        "a-104"
+      ],
+      "primary_service": "auth-session",
+      "suspected_cause": "Recent deployment",
+      "blast_radius": "single_service",
+      "confidence": 0.81,
+      "needs_human_review": false
+    },
+    {
+      "incident_id": "inc-003",
+      "title": "Payments withdrawal reconciliation backlog",
+      "summary": "Global withdrawal queue depth exceeded with provider delays.",
+      "alert_ids": [
+        "a-105"
+      ],
+      "primary_service": "payments-ledger",
+      "suspected_cause": "Settlement provider callback delay",
+      "blast_radius": "global",
+      "confidence": 0.9,
+      "needs_human_review": false
+    },
+    {
+      "incident_id": "inc-004",
+      "title": "Risk engine model drift after rollout",
+      "summary": "Decision distribution shifted after model rollout.",
+      "alert_ids": [
+        "a-106"
+      ],
+      "primary_service": "risk-engine",
+      "suspected_cause": "Model rollout 40 minutes ago",
+      "blast_radius": "regional",
+      "confidence": 0.86,
+      "needs_human_review": false
+    },
+    {
+      "incident_id": "inc-005",
+      "title": "Internal LLM spend burst",
+      "summary": "Token spend spike from code review jobs.",
+      "alert_ids": [
+        "a-107"
+      ],
+      "primary_service": "internal-dev-agent",
+      "suspected_cause": "Autonomous review job burst",
+      "blast_radius": "single_service",
+      "confidence": 0.78,
+      "needs_human_review": false
+    },
+    {
+      "incident_id": "inc-006",
+      "title": "US market-data latency isolated",
+      "summary": "Mild latency in us-east-1 without packet loss.",
+      "alert_ids": [
+        "a-108"
+      ],
+      "primary_service": "market-data-stream",
+      "suspected_cause": "Isolated regional pressure",
+      "blast_radius": "regional",
+      "confidence": 0.72,
+      "needs_human_review": false
+    }
+  ],
+  "severity_assessments": [
+    {
+      "incident_id": "inc-001",
+      "severity": "sev1",
+      "status": "open",
+      "business_impact": "Trading experience degraded; order delays possible",
+      "technical_impact": "Quote path and execution timeouts",
+      "reasoning": "Trade execution depends on market data; multi-service impact"
+    },
+    {
+      "incident_id": "inc-002",
+      "severity": "sev2",
+      "status": "open",
+      "business_impact": "Possible login friction",
+      "technical_impact": "CPU after deploy",
+      "reasoning": "Rollout-correlated but traffic normal"
+    },
+    {
+      "incident_id": "inc-003",
+      "severity": "sev1",
+      "status": "open",
+      "business_impact": "Withdrawals delayed",
+      "technical_impact": "Reconciliation backlog",
+      "reasoning": "Financial correctness at risk if rushed"
+    },
+    {
+      "incident_id": "inc-004",
+      "severity": "sev1",
+      "status": "open",
+      "business_impact": "Risk decisions may be wrong",
+      "technical_impact": "Model drift after rollout",
+      "reasoning": "Compliance exposure; rollback preferred"
+    },
+    {
+      "incident_id": "inc-005",
+      "severity": "sev3",
+      "status": "open",
+      "business_impact": "Internal cost only",
+      "technical_impact": "LLM spend",
+      "reasoning": "No customer trading impact"
+    },
+    {
+      "incident_id": "inc-006",
+      "severity": "sev2",
+      "status": "monitoring",
+      "business_impact": "Limited regional latency",
+      "technical_impact": "Isolated us-east-1",
+      "reasoning": "No packet loss; monitor"
+    }
+  ],
+  "action_proposals": [
+    {
+      "incident_id": "inc-001",
+      "action": "shift_traffic",
+      "why": "Runbook-aligned first response",
+      "expected_effect": "Reduce impact",
+      "risk": "Low to moderate",
+      "safety_level": "safe"
+    },
+    {
+      "incident_id": "inc-001",
+      "action": "throttle_non_critical_consumers",
+      "why": "Runbook-aligned first response",
+      "expected_effect": "Reduce impact",
+      "risk": "Low to moderate",
+      "safety_level": "safe"
+    },
+    {
+      "incident_id": "inc-002",
+      "action": "roll_back_recent_deploy",
+      "why": "Runbook-aligned first response",
+      "expected_effect": "Reduce impact",
+      "risk": "Low to moderate",
+      "safety_level": "safe"
+    },
+    {
+      "incident_id": "inc-003",
+      "action": "pause_retries",
+      "why": "Runbook-aligned first response",
+      "expected_effect": "Reduce impact",
+      "risk": "Low to moderate",
+      "safety_level": "needs_approval"
+    },
+    {
+      "incident_id": "inc-003",
+      "action": "scale_workers",
+      "why": "Runbook-aligned first response",
+      "expected_effect": "Reduce impact",
+      "risk": "Low to moderate",
+      "safety_level": "needs_approval"
+    },
+    {
+      "incident_id": "inc-004",
+      "action": "roll_back_model",
+      "why": "Runbook-aligned first response",
+      "expected_effect": "Reduce impact",
+      "risk": "Low to moderate",
+      "safety_level": "safe"
+    },
+    {
+      "incident_id": "inc-005",
+      "action": "cap_token_budget",
+      "why": "Runbook-aligned first response",
+      "expected_effect": "Reduce impact",
+      "risk": "Low to moderate",
+      "safety_level": "safe"
+    },
+    {
+      "incident_id": "inc-006",
+      "action": "throttle_non_critical_consumers",
+      "why": "Runbook-aligned first response",
+      "expected_effect": "Reduce impact",
+      "risk": "Low to moderate",
+      "safety_level": "safe"
+    }
+  ],
+  "safety_review": [
+    {
+      "incident_id": "inc-001",
+      "action": "shift_traffic",
+      "model_safety_level": "safe",
+      "final_safety_level": "safe",
+      "guardrail_reasons": []
+    },
+    {
+      "incident_id": "inc-001",
+      "action": "throttle_non_critical_consumers",
+      "model_safety_level": "safe",
+      "final_safety_level": "safe",
+      "guardrail_reasons": []
+    },
+    {
+      "incident_id": "inc-002",
+      "action": "roll_back_recent_deploy",
+      "model_safety_level": "safe",
+      "final_safety_level": "safe",
+      "guardrail_reasons": []
+    },
+    {
+      "incident_id": "inc-003",
+      "action": "pause_retries",
+      "model_safety_level": "needs_approval",
+      "final_safety_level": "needs_approval",
+      "guardrail_reasons": [
+        "change freeze on critical dependency path"
+      ]
+    },
+    {
+      "incident_id": "inc-003",
+      "action": "scale_workers",
+      "model_safety_level": "needs_approval",
+      "final_safety_level": "needs_approval",
+      "guardrail_reasons": [
+        "change freeze on critical dependency path"
+      ]
+    },
+    {
+      "incident_id": "inc-004",
+      "action": "roll_back_model",
+      "model_safety_level": "safe",
+      "final_safety_level": "safe",
+      "guardrail_reasons": []
+    },
+    {
+      "incident_id": "inc-005",
+      "action": "cap_token_budget",
+      "model_safety_level": "safe",
+      "final_safety_level": "safe",
+      "guardrail_reasons": []
+    },
+    {
+      "incident_id": "inc-006",
+      "action": "throttle_non_critical_consumers",
+      "model_safety_level": "safe",
+      "final_safety_level": "safe",
+      "guardrail_reasons": []
+    }
+  ],
+  "stakeholder_updates": [
+    {
+      "incident_id": "inc-001",
+      "engineering_update": "inc-001 (sev1) affects market-data-stream with multi_service blast radius. EU market-data latency and errors cascading to trade timeouts. Suspected cause is Consumer lag and fanout failures. Technical impact: Quote path and execution timeouts. Immediate next step is shift traffic on market-data-stream. No market-data-stream action is currently blocked by safety checks.",
+      "executive_update": "We are responding to a sev1 issue on market-data-stream. Trading experience degraded; order delays possible. Early indications point to Consumer lag and fanout failures. The team is preparing to shift traffic, and any action needing approval will wait for sign-off."
+    },
+    {
+      "incident_id": "inc-002",
+      "engineering_update": "inc-002 (sev2) affects auth-session with single_service blast radius. CPU spike after recent auth deploy with normal login traffic. Suspected cause is Recent deployment. Technical impact: CPU after deploy. Immediate next step is roll back recent deploy on auth-session. No auth-session action is currently blocked by safety checks.",
+      "executive_update": "We are responding to a sev2 issue on auth-session. Possible login friction. Early indications point to Recent deployment. The team is preparing to roll back recent deploy, and any action needing approval will wait for sign-off."
+    },
+    {
+      "incident_id": "inc-003",
+      "engineering_update": "inc-003 (sev1) affects payments-ledger with global blast radius. Global withdrawal queue depth exceeded with provider delays. Suspected cause is Settlement provider callback delay. Technical impact: Reconciliation backlog. Immediate next step is pause retries on payments-ledger. Safety checks hold pause_retries, scale_workers pending approval.",
+      "executive_update": "We are responding to a sev1 issue on payments-ledger. Withdrawals delayed. Early indications point to Settlement provider callback delay. The team is preparing to pause retries, and any action needing approval will wait for sign-off."
+    },
+    {
+      "incident_id": "inc-004",
+      "engineering_update": "inc-004 (sev1) affects risk-engine with regional blast radius. Decision distribution shifted after model rollout. Suspected cause is Model rollout 40 minutes ago. Technical impact: Model drift after rollout. Immediate next step is roll back model on risk-engine. No risk-engine action is currently blocked by safety checks.",
+      "executive_update": "We are responding to a sev1 issue on risk-engine. Risk decisions may be wrong. Early indications point to Model rollout 40 minutes ago. The team is preparing to roll back model, and any action needing approval will wait for sign-off."
+    },
+    {
+      "incident_id": "inc-005",
+      "engineering_update": "inc-005 (sev3) affects internal-dev-agent with single_service blast radius. Token spend spike from code review jobs. Suspected cause is Autonomous review job burst. Technical impact: LLM spend. Immediate next step is cap token budget on internal-dev-agent. No internal-dev-agent action is currently blocked by safety checks.",
+      "executive_update": "We are responding to a sev3 issue on internal-dev-agent. Internal cost only. Early indications point to Autonomous review job burst. The team is preparing to cap token budget, and any action needing approval will wait for sign-off."
+    },
+    {
+      "incident_id": "inc-006",
+      "engineering_update": "inc-006 (sev2) affects market-data-stream with regional blast radius. Mild latency in us-east-1 without packet loss. Suspected cause is Isolated regional pressure. Technical impact: Isolated us-east-1. Immediate next step is throttle non critical consumers on market-data-stream. No market-data-stream action is currently blocked by safety checks.",
+      "executive_update": "We are responding to a sev2 issue on market-data-stream. Limited regional latency. Early indications point to Isolated regional pressure. The team is preparing to throttle non critical consumers, and any action needing approval will wait for sign-off."
+    }
+  ],
+  "operator_feedback": [
+    {
+      "incident_id": "inc-001",
+      "original_severity": "sev1",
+      "corrected_severity": "sev0",
+      "original_action": "shift_traffic",
+      "corrected_action": null,
+      "action_status": "accepted",
+      "severity_status": "corrected",
+      "original_status": "open",
+      "corrected_status": null,
+      "status_status": "accepted",
+      "timestamp": "2026-08-30T09:36:56Z"
+    },
+    {
+      "incident_id": "inc-002",
+      "original_severity": "sev2",
+      "corrected_severity": null,
+      "original_action": "roll_back_recent_deploy",
+      "corrected_action": "restart_pods",
+      "action_status": "corrected",
+      "severity_status": "accepted",
+      "original_status": "open",
+      "corrected_status": null,
+      "status_status": "accepted",
+      "timestamp": "2026-08-30T09:37:26Z"
+    },
+    {
+      "incident_id": "inc-003",
+      "original_severity": "sev1",
+      "corrected_severity": null,
+      "original_action": "pause_retries",
+      "corrected_action": null,
+      "action_status": "accepted",
+      "severity_status": "accepted",
+      "original_status": "open",
+      "corrected_status": null,
+      "status_status": "accepted",
+      "timestamp": "2026-08-30T09:37:30Z"
+    },
+    {
+      "incident_id": "inc-004",
+      "original_severity": "sev1",
+      "corrected_severity": null,
+      "original_action": "roll_back_model",
+      "corrected_action": null,
+      "action_status": "accepted",
+      "severity_status": "accepted",
+      "original_status": "open",
+      "corrected_status": null,
+      "status_status": "accepted",
+      "timestamp": "2026-08-30T09:37:31Z"
+    },
+    {
+      "incident_id": "inc-005",
+      "original_severity": "sev3",
+      "corrected_severity": null,
+      "original_action": "cap_token_budget",
+      "corrected_action": null,
+      "action_status": "accepted",
+      "severity_status": "accepted",
+      "original_status": "open",
+      "corrected_status": null,
+      "status_status": "accepted",
+      "timestamp": "2026-08-30T09:37:32Z"
+    },
+    {
+      "incident_id": "inc-006",
+      "original_severity": "sev2",
+      "corrected_severity": null,
+      "original_action": "throttle_non_critical_consumers",
+      "corrected_action": null,
+      "action_status": "accepted",
+      "severity_status": "accepted",
+      "original_status": "monitoring",
+      "corrected_status": null,
+      "status_status": "accepted",
+      "timestamp": "2026-08-30T09:37:32Z"
+    }
+  ],
+  "severity_redecision": [
+    {
+      "incident_id": "inc-001",
+      "severity": "sev0",
+      "status": "open",
+      "business_impact": "Active trading halt and order submission failures for users in eu-west-1, directly affecting transaction execution and market integrity.",
+      "technical_impact": "Packet retransmits and consumer lag in market-data-stream cascading into widespread quote fetch timeouts and order routing execution drops.",
+      "reasoning": "Severe multi-service disruption directly impacting critical trading execution pipelines in eu-west-1 with no safe degradation path."
+    },
+    {
+      "incident_id": "inc-002",
+      "severity": "sev2",
+      "status": "open",
+      "business_impact": "Potential latency or authentication delays for users in ap-south-1 if capacity degrades further.",
+      "technical_impact": "Sustained high CPU utilization exceeding 92% across auth-session pods following recent deployment.",
+      "reasoning": "Performance degradation correlated with a recent rollout on a high-tier identity service; currently contained but risks auth failures if unmitigated."
+    },
+    {
+      "incident_id": "inc-003",
+      "severity": "sev1",
+      "status": "open",
+      "business_impact": "Delays in user withdrawal processing and potential settlement discrepancies affecting financial reconciliation.",
+      "technical_impact": "Reconciliation backlog exceeding 18,000 items due to settlement provider latency and retry storms.",
+      "reasoning": "Critical payments infrastructure failure with global blast radius and financial correctness exposure requiring immediate remediation."
+    },
+    {
+      "incident_id": "inc-004",
+      "severity": "sev1",
+      "status": "open",
+      "business_impact": "Erroneous risk decisions and high false-positive rejections for legitimate customer trades following model deployment.",
+      "technical_impact": "A 23% statistical drift in risk scoring distribution indicating systematic model misclassification.",
+      "reasoning": "Rollout-correlated drift on critical risk-engine service directly impacting trade evaluation accuracy and platform compliance posture."
+    },
+    {
+      "incident_id": "inc-005",
+      "severity": "sev3",
+      "status": "open",
+      "business_impact": "Unplanned internal operational cost inflation with no direct customer or trading impact.",
+      "technical_impact": "Autonomous code review agents consuming 4.6x baseline LLM token volume due to uncapped loops.",
+      "reasoning": "Internal developer agent anomaly on medium-tier service without external customer exposure or data risk."
+    },
+    {
+      "incident_id": "inc-006",
+      "severity": "sev2",
+      "status": "monitoring",
+      "business_impact": "Localized tick latency increase in us-east-1 that may cause minor pricing delays without complete trade failure.",
+      "technical_impact": "p99 latency increase to 170ms on market-data-stream regional nodes without packet loss.",
+      "reasoning": "Single-region latency elevation on critical market data stream being monitored with no widespread cascading failures."
+    }
+  ],
+  "actions_redecision": [
+    {
+      "incident_id": "inc-001",
+      "action": "shift_traffic",
+      "why": "Isolate the degraded eu-west-1 market-data-stream instances by shifting regional traffic away to restore downstream quote fetching and order execution.",
+      "expected_effect": "Relieves load and packet retransmit issues in eu-west-1 while allowing healthy regions to handle trade execution traffic.",
+      "risk": "Potential increased latency or load spikes on destination regions.",
+      "safety_level": "needs_approval"
+    },
+    {
+      "incident_id": "inc-002",
+      "action": "restart_pods",
+      "why": "Clear transient initialization bottlenecks or stuck runtime processes on auth-session pods following deployment.",
+      "expected_effect": "CPU utilization returns to baseline operational levels across the service fleet.",
+      "risk": "Minor transient connection churn during rolling pod termination and startup.",
+      "safety_level": "safe"
+    },
+    {
+      "incident_id": "inc-003",
+      "action": "pause_retries",
+      "why": "Elevated retry storms due to external settlement provider latency are amplifying the reconciliation backlog.",
+      "expected_effect": "Halts cascading retry attempts, stabilizing queue depth and reducing load on the payments-ledger processing queue.",
+      "risk": "Withdrawal reconciliation processing will be temporarily delayed until retries are safely resumed.",
+      "safety_level": "needs_approval"
+    },
+    {
+      "incident_id": "inc-004",
+      "action": "roll_back_model",
+      "why": "The newly deployed model exhibits a 23% decision distribution drift causing high false-positive rejections on customer trades.",
+      "expected_effect": "Restores risk evaluation scoring to baseline distribution and stops erroneous rejections.",
+      "risk": "Brief transition period while reloading previous model weights in memory.",
+      "safety_level": "needs_approval"
+    },
+    {
+      "incident_id": "inc-005",
+      "action": "cap_token_budget",
+      "why": "Surge in autonomous code review workloads is consuming LLM tokens at 4.6x baseline due to uncapped loops.",
+      "expected_effect": "Instantly caps maximum token consumption to prevent runaway billing and cost inflation.",
+      "risk": "In-flight code review jobs exceeding the budget cap may fail or be truncated.",
+      "safety_level": "safe"
+    },
+    {
+      "incident_id": "inc-006",
+      "action": "throttle_non_critical_consumers",
+      "why": "Relieve localized processing load and consumer backpressure on us-east-1 market-data-stream nodes without impacting core trade execution.",
+      "expected_effect": "Reduces regional node load and brings p99 market data stream latency back within standard thresholds.",
+      "risk": "Non-critical downstream services such as reporting and analytics may experience temporary delays in receiving updates.",
+      "safety_level": "safe"
+    }
+  ],
+  "before_after_comparison": [
+    {
+      "incident_id": "inc-001",
+      "original_severity": "sev1",
+      "operator_severity": "sev0",
+      "redecided_severity": "sev0",
+      "original_top_action": "shift_traffic",
+      "operator_action": "shift_traffic",
+      "redecided_top_action": "shift_traffic",
+      "moved_toward_operator": true
+    },
+    {
+      "incident_id": "inc-002",
+      "original_severity": "sev2",
+      "operator_severity": "sev2",
+      "redecided_severity": "sev2",
+      "original_top_action": "roll_back_recent_deploy",
+      "operator_action": "restart_pods",
+      "redecided_top_action": "restart_pods",
+      "moved_toward_operator": true
+    },
+    {
+      "incident_id": "inc-003",
+      "original_severity": "sev1",
+      "operator_severity": "sev1",
+      "redecided_severity": "sev1",
+      "original_top_action": "pause_retries",
+      "operator_action": "pause_retries",
+      "redecided_top_action": "pause_retries",
+      "moved_toward_operator": true
+    },
+    {
+      "incident_id": "inc-004",
+      "original_severity": "sev1",
+      "operator_severity": "sev1",
+      "redecided_severity": "sev1",
+      "original_top_action": "roll_back_model",
+      "operator_action": "roll_back_model",
+      "redecided_top_action": "roll_back_model",
+      "moved_toward_operator": true
+    },
+    {
+      "incident_id": "inc-005",
+      "original_severity": "sev3",
+      "operator_severity": "sev3",
+      "redecided_severity": "sev3",
+      "original_top_action": "cap_token_budget",
+      "operator_action": "cap_token_budget",
+      "redecided_top_action": "cap_token_budget",
+      "moved_toward_operator": true
+    },
+    {
+      "incident_id": "inc-006",
+      "original_severity": "sev2",
+      "operator_severity": "sev2",
+      "redecided_severity": "sev2",
+      "original_top_action": "throttle_non_critical_consumers",
+      "operator_action": "throttle_non_critical_consumers",
+      "redecided_top_action": "throttle_non_critical_consumers",
+      "moved_toward_operator": true
+    }
+  ],
+  "agreement_delta": {
+    "n_labeled": 6,
+    "severity_before_matches": 5,
+    "severity_after_matches": 6,
+    "severity_count_delta": 1,
+    "severity_rate_before": 0.8333333333333334,
+    "severity_rate_after": 1.0,
+    "severity_rate_delta": 0.16666666666666663,
+    "action_before_matches": 5,
+    "action_after_matches": 6,
+    "action_count_delta": 1,
+    "action_rate_before": 0.8333333333333334,
+    "action_rate_after": 1.0,
+    "action_rate_delta": 0.16666666666666663
+  },
+  "analytics_summary": {
+    "incident_count": 6,
+    "alert_count": 8,
+    "average_grouping_confidence": 0.825,
+    "severity_distribution": {
+      "sev1": 3,
+      "sev2": 2,
+      "sev3": 1
+    },
+    "blast_radius_distribution": {
+      "multi_service": 1,
+      "single_service": 2,
+      "global": 1,
+      "regional": 2
+    },
+    "human_review_flag_count": 0,
+    "proposed_actions_by_safety_level": {
+      "safe": 6,
+      "needs_approval": 2
+    },
+    "operator_correction_count": 2,
+    "agreement_delta": {
+      "n_labeled": 6,
+      "severity_before_matches": 5,
+      "severity_after_matches": 6,
+      "severity_count_delta": 1,
+      "severity_rate_before": 0.8333333333333334,
+      "severity_rate_after": 1.0,
+      "severity_rate_delta": 0.16666666666666663,
+      "action_before_matches": 5,
+      "action_after_matches": 6,
+      "action_count_delta": 1,
+      "action_rate_before": 0.8333333333333334,
+      "action_rate_after": 1.0,
+      "action_rate_delta": 0.16666666666666663
+    },
+    "services_most_involved": [
+      {
+        "service": "market-data-stream",
+        "incident_count": 2
+      },
+      {
+        "service": "auth-session",
+        "incident_count": 1
+      },
+      {
+        "service": "payments-ledger",
+        "incident_count": 1
+      },
+      {
+        "service": "risk-engine",
+        "incident_count": 1
+      },
+      {
+        "service": "internal-dev-agent",
+        "incident_count": 1
+      }
+    ]
+  },
+  "escalation_bundle": [
+    {
+      "incident_id": "inc-001",
+      "owner_team": "Core Trading",
+      "page": true,
+      "suggested_channel": "#incident-core-trading",
+      "summary": "[sev0] Market Data Stream Degradation and Downstream Trade Execution Timeouts in eu-west-1: Severe latency and tick publish failures in market-data-stream are cascading into order submission timeouts for trade-execution in eu-west-1."
+    },
+    {
+      "incident_id": "inc-003",
+      "owner_team": "Payments Platform",
+      "page": true,
+      "suggested_channel": "#incident-payments-platform",
+      "summary": "[sev1] Withdrawal Reconciliation Backlog in payments-ledger: Withdrawal reconciliation queue depth spiked past 18,000 due to settlement callback delays from the external provider."
+    },
+    {
+      "incident_id": "inc-004",
+      "owner_team": "Risk & Compliance",
+      "page": true,
+      "suggested_channel": "#incident-risk-and-compliance",
+      "summary": "[sev1] Risk Engine Decision Distribution Drift Following Model Rollout: Risk evaluation decision distribution shifted 23% from baseline shortly after a new model rollout in eu-west-1."
+    }
+  ],
+  "quarantined_inputs": []
+}

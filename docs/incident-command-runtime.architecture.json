@@ -1,0 +1,218 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "Incident command runtime",
+    "locale": "en",
+    "output": "incident-command-runtime.html",
+    "quality_profile": "showcase",
+    "views": [
+      {
+        "id": "write-path",
+        "label": "Pipeline write path",
+        "focus": ["operator", "pipeline", "vertex", "guardrails", "tty", "pair_store"],
+        "note": "Operator starts the staged pipeline; Vertex proposes; local guardrails and TTY decide; pair files persist."
+      },
+      {
+        "id": "trust-gates",
+        "label": "Trust gates",
+        "focus": ["guardrails", "tty", "validator", "pair_store"],
+        "note": "Actions are recommendations only. Forbidden actions never execute; artifacts must pass validate_pair."
+      },
+      {
+        "id": "assistant-read",
+        "label": "ADK read path",
+        "focus": ["pair_store", "summarize", "root_agent"],
+        "note": "The ADK assistant answers only from summarize_pair over completed pair artifacts."
+      }
+    ]
+  },
+  "components": [
+    {
+      "id": "operator",
+      "type": "external",
+      "label": "Operator",
+      "sublabel": "CLI",
+      "pos": [48, 310],
+      "size": [128, 62]
+    },
+    {
+      "id": "pipeline",
+      "type": "backend",
+      "label": "run_pipeline",
+      "sublabel": "app.pipeline",
+      "pos": [236, 310],
+      "size": [158, 62]
+    },
+    {
+      "id": "vertex",
+      "type": "cloud",
+      "label": "Vertex Gemini",
+      "sublabel": "JSON",
+      "brand": "google-gemini",
+      "pos": [466, 120],
+      "size": [176, 62]
+    },
+    {
+      "id": "guardrails",
+      "type": "security",
+      "label": "Safety guardrails",
+      "sublabel": "deterministic review",
+      "pos": [466, 310],
+      "size": [176, 62]
+    },
+    {
+      "id": "tty",
+      "type": "frontend",
+      "label": "Operator review",
+      "sublabel": "interactive TTY",
+      "pos": [722, 310],
+      "size": [156, 62]
+    },
+    {
+      "id": "pair_store",
+      "type": "database",
+      "label": "Pair artifacts",
+      "sublabel": "pair folder",
+      "pos": [956, 310],
+      "size": [168, 62]
+    },
+    {
+      "id": "validator",
+      "type": "security",
+      "label": "validate_pair",
+      "sublabel": "validate.py",
+      "pos": [956, 500],
+      "size": [168, 62]
+    },
+    {
+      "id": "summarize",
+      "type": "backend",
+      "label": "summarize_pair",
+      "sublabel": "ADK tool",
+      "pos": [1148, 310],
+      "size": [156, 62]
+    },
+    {
+      "id": "root_agent",
+      "type": "backend",
+      "label": "root_agent",
+      "sublabel": "ADK ReAct",
+      "pos": [1148, 120],
+      "size": [156, 62]
+    }
+  ],
+  "boundaries": [
+    {
+      "kind": "region",
+      "label": "Local workspace process",
+      "wraps": [
+        "pipeline",
+        "guardrails",
+        "tty",
+        "pair_store",
+        "validator",
+        "summarize",
+        "root_agent"
+      ]
+    },
+    {
+      "kind": "security-group",
+      "label": "Fail-closed safety",
+      "wraps": ["guardrails"]
+    },
+    {
+      "kind": "security-group",
+      "label": "Human approval",
+      "wraps": ["tty"]
+    }
+  ],
+  "connections": [
+    {
+      "id": "start-cli",
+      "from": "operator",
+      "to": "pipeline",
+      "label": "uv run",
+      "variant": "emphasis"
+    },
+    {
+      "id": "llm-json",
+      "from": "pipeline",
+      "to": "vertex",
+      "label": "generate_json",
+      "variant": "emphasis"
+    },
+    {
+      "id": "proposals-in",
+      "from": "vertex",
+      "to": "guardrails",
+      "label": "proposals",
+      "variant": "emphasis",
+      "labelDy": 28
+    },
+    {
+      "id": "review-gate",
+      "from": "guardrails",
+      "to": "tty",
+      "label": "verdicts",
+      "variant": "emphasis"
+    },
+    {
+      "id": "persist",
+      "from": "tty",
+      "to": "pair_store",
+      "label": "persist",
+      "variant": "emphasis"
+    },
+    {
+      "id": "contracts",
+      "from": "pair_store",
+      "to": "validator",
+      "label": "contracts",
+      "variant": "security",
+      "labelDy": 28
+    },
+    {
+      "id": "ground",
+      "from": "pair_store",
+      "to": "summarize",
+      "label": "read JSON",
+      "labelDy": 55
+    },
+    {
+      "id": "tool-result",
+      "from": "summarize",
+      "to": "root_agent",
+      "label": "grounding"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "Primary write path",
+      "items": [
+        "Stages: group → severity → actions → drafts → TTY → always-regroup → redecision",
+        "Pair name is the session id; artifacts live under pipeline_files/<pair>/",
+        "Resume reuses first-pass JSON and prints STORED; --rerun forces a fresh Vertex pass"
+      ]
+    },
+    {
+      "dot": "rose",
+      "title": "Trust boundaries",
+      "items": [
+        "Vertex is outside the workspace; model JSON is not executed",
+        "Guardrails canonicalize and forbid runbook/semantic-unsafe actions before accept",
+        "validate_pair must succeed before VALIDATION_COMPLETE is stamped"
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "Assistant and eval",
+      "items": [
+        "FastAPI :8000 (agents-cli playground) serves root_agent plus A2A and reasoning_engine routes",
+        "root_agent calls only summarize_pair; answers stay grounded in pair artifacts",
+        "CI: agents-cli eval run with pipeline_artifact_checks; --fake-llm skips Vertex"
+      ]
+    }
+  ]
+}

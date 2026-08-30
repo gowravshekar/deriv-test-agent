@@ -1,6 +1,0 @@
-# Cases that must not call tools (greeting, capital_lookup).
-# Do not add tool_use_quality: it 400s when the trace has no function_call.
-metrics_to_run:
-  - hallucination
-  - final_response_quality
-  - final_response_match
